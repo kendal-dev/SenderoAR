@@ -1,0 +1,81 @@
+name: ✨ Feature Request
+description: Proponer una nueva característica o mejora para Sendero AR
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+assignees:
+  - kendallab
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por proponer una mejora. Las features bien justificadas son más fáciles de priorizar e implementar.
+
+  - type: input
+    id: feature-name
+    attributes:
+      label: Nombre de la feature
+      placeholder: "Ej: Modo nocturno para la interfaz"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: ¿Qué problema resolvería?
+      description: Describí la frustración o necesidad que tenés actualmente
+      placeholder: "Como turista que visita los monumentos al atardecer, la pantalla blanca de la UI me deslumbra y dificulta la lectura."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: ¿Cómo te imaginás que debería funcionar?
+      placeholder: "Agregar un toggle en Settings que cambie todos los colores de la UI a esquema oscuro con detalles en cian."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: ¿Pensaste en otras formas de resolver esto?
+      placeholder: "Auto-switch basado en hora del día, o respetar la preferencia del sistema operativo."
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridad sugerida
+      options:
+        - "🔴 Crítica (bloqueante)"
+        - "🟠 Alta (importante para MVP)"
+        - "🟡 Media (nice-to-have)"
+        - "🟢 Baja (post-MVP)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Área afectada
+      multiple: true
+      options:
+        - AR Tracking
+        - Chatbot Gemini
+        - UI/UX
+        - Modelos 3D
+        - Audio / Narraciones
+        - Localización (idiomas)
+        - Backend Firebase
+        - DevOps / CI-CD
+        - Documentación
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Contexto adicional
+      description: Mockups, links a referencias, papers, ejemplos de otras apps

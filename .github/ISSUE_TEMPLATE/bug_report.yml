@@ -1,0 +1,101 @@
+name: 🐛 Bug Report
+description: Reportar un comportamiento inesperado o un error en Sendero AR
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees:
+  - kendallab
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar este bug. Por favor completá toda la información para reproducirlo y resolverlo lo más rápido posible.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Resumen del bug
+      description: Describí brevemente qué está mal
+      placeholder: "Ej: La cámara AR no detecta el Templo de San José en iOS"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: ¿Qué hiciste exactamente antes de que apareciera el bug?
+      placeholder: |
+        1. Abro la app
+        2. Voy al menú "Monumentos"
+        3. Selecciono "Templo de San José"
+        4. Apunto la cámara al monumento
+        5. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamiento esperado
+      description: ¿Qué esperabas que pasara?
+      placeholder: "Esperaba que el modelo 3D apareciera superpuesto sobre la fachada"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamiento actual
+      description: ¿Qué pasó en realidad?
+      placeholder: "El modelo 3D nunca aparece. La cámara muestra solo el feed real."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Plataforma
+      options:
+        - Android
+        - iOS
+        - Editor de Unity (Play Mode)
+        - XR Simulation
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Dispositivo y versión del SO
+      description: Modelo del dispositivo y versión del sistema operativo
+      placeholder: "Ej: Samsung Galaxy S22 con Android 14"
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: Versión de Sendero AR
+      placeholder: "Ej: 0.1.0-alpha"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs o capturas de pantalla
+      description: Pegá logs relevantes de la consola o adjuntá imágenes/videos
+      placeholder: "Pegá aquí los errores de la consola, o arrastrá imágenes"
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidad
+      options:
+        - "🔴 Crítica (la app crashea)"
+        - "🟠 Alta (feature principal no funciona)"
+        - "🟡 Media (feature secundaria afectada)"
+        - "🟢 Baja (mejora cosmética)"
+    validations:
+      required: true

@@ -1,0 +1,43 @@
+name: ❓ Question
+description: Preguntar algo sobre el proyecto, arquitectura o implementación
+title: "[QUESTION] "
+labels: ["question"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de preguntar, por favor verificá que la respuesta no esté ya en `/docs/` o en Issues cerrados.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Tu pregunta
+      description: Sé específico y dá contexto
+      placeholder: "Ej: ¿Por qué se usa MVVM puro en lugar de Zenject? ¿No sería más fácil con un framework de DI?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: ¿Qué estás tratando de lograr? ¿Qué ya investigaste?
+      placeholder: "Estoy intentando entender por qué se descartaron frameworks externos para DI. Ya leí el documento 04_MVVM_Patterns.md pero..."
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Tema
+      options:
+        - Arquitectura general
+        - MVVM / Patrones de diseño
+        - AR Foundation / Image Tracking
+        - Firebase / Gemini AI
+        - Modelos 3D / Blender
+        - TTS / Audio
+        - CI/CD / GitHub Actions
+        - Setup del entorno de desarrollo
+        - Otro
+    validations:
+      required: true
