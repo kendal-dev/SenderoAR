@@ -5,7 +5,7 @@
 ### Realidad Aumentada para el Patrimonio Misional de Chiquitos
 
 [![Unity](https://img.shields.io/badge/Unity-2022.3.62f3_LTS-000000?style=for-the-badge&logo=unity)](https://unity.com/releases/editor/whats-new/2022.3.62)
-[![AR Foundation](https://img.shields.io/badge/AR_Foundation-6.0.7-success?style=for-the-badge)](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@6.0/manual/index.html)
+[![AR Foundation](https://img.shields.io/badge/AR_Foundation-5.2.0-success?style=for-the-badge)](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@5.2/manual/index.html)
 [![C#](https://img.shields.io/badge/C%23-.NET_Standard_2.1-239120?style=for-the-badge&logo=csharp)](https://learn.microsoft.com/en-us/dotnet/csharp/)
 [![Firebase](https://img.shields.io/badge/Firebase-AI_Logic-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com/docs/ai-logic)
 [![Gemini](https://img.shields.io/badge/Gemini-3.1_Flash--Lite-4285F4?style=for-the-badge&logo=google)](https://ai.google.dev/gemini-api/docs/models/gemini)
@@ -64,9 +64,9 @@ Para profundizar en la experiencia, un chatbot histórico impulsado por **Gemini
 | Componente | Versión | Propósito |
 |---|---|---|
 | **Unity LTS** | 2022.3.62f3 | Motor de juego y AR |
-| **AR Foundation** | 6.0.7+ | Framework AR multiplataforma |
-| **ARCore XR Plugin** | 6.0.7+ | Backend Android |
-| **ARKit XR Plugin** | 6.0.7+ | Backend iOS |
+| **AR Foundation** | 5.2.0 | Framework AR multiplataforma |
+| **ARCore XR Plugin** | 5.2.0 | Backend Android |
+| **ARKit XR Plugin** | 5.2.0 | Backend iOS |
 | **Universal RP** | 14.0 | Pipeline de renderizado optimizado para móvil |
 | **TextMeshPro** | 3.0 | Renderizado de tipografía |
 
@@ -157,7 +157,7 @@ SenderoAR/
 │       └── ReferenceLibrary/         # XRReferenceImageLibrary
 │
 ├── Packages/
-│   └── manifest.json                 # AR Foundation 6.0.7 forzado
+│   └── manifest.json                 # AR Foundation 5.2.0
 │
 ├── docs/                             # Documentación técnica
 │
@@ -174,7 +174,7 @@ Proyecto estructurado en **12 sprints de 2 semanas** (24 semanas totales), sigui
 
 | Sprint | Periodo | Objetivo |
 |---|---|---|
-| **S0** | 18 – 22 May 2026 | Cimentación: setup repo + AR Foundation 6.0 |
+| **S0** | 18 – 22 May 2026 | Cimentación: setup repo + AR Foundation 5.2 |
 | **S1** | 25 May – 5 Jun | Image Tracking PoC de 1 monumento |
 | **S2** | 8 – 19 Jun | Modelo de datos + ScriptableObjects |
 | **S3** | 22 Jun – 3 Jul | Arquitectura MVVM base |
@@ -238,13 +238,7 @@ Este es un proyecto académico de grado en desarrollo activo. Si querés reporta
 
 1. Revisá los [Issues abiertos](../../issues)
 2. Usá las plantillas correspondientes (Bug Report / Feature Request)
-3. Para Pull Requests, seguí la convención **Conventional Commits**:
-   - `feat:` nueva característica
-   - `fix:` corrección de bug
-   - `docs:` cambios en documentación
-   - `chore:` mantenimiento del repo
-   - `test:` agregar o modificar tests
-   - `refactor:` refactorización sin cambio de comportamiento
+3. Para Pull Requests, seguí la convención **Conventional Commits**
 
 ---
 
