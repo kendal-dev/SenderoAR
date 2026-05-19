@@ -80,8 +80,9 @@ namespace KendalLab.SenderoAR.Core.Bootstrap
             Debug.Log($"[Bootstrap] AR disponible. Estado: {ARSession.state}");
             Debug.Log($"[Bootstrap] XR Origin camera: {xrOrigin.Camera.name}");
 
-            //AppContext.Initialize();
+            Debug.Log($"[Bootstrap] AR disponible. Estado: {ARSession.state}");
 
+            AppContext.Initialize();
             // TODO Sprint 1: SceneManager.LoadSceneAsync("_Main", LoadSceneMode.Single);
         }
 
