@@ -14,7 +14,7 @@
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS-lightgrey?style=flat-square)](#)
 [![Status](https://img.shields.io/badge/status-MVP_in_development-orange?style=flat-square)](#)
 
-**Aplicación móvil multiplataforma que utiliza Image Tracking offline y un chatbot histórico online para enriquecer la experiencia turística autónoma en las Misiones Jesuíticas de San José de Chiquitos, Bolivia (Patrimonio UNESCO desde 1990).**
+**Aplicación móvil que utiliza Image Tracking offline y un chatbot histórico online para enriquecer la experiencia turística autónoma en las Misiones Jesuíticas de San José de Chiquitos, Bolivia (Patrimonio UNESCO desde 1990).**
 
 </div>
 
