@@ -1,11 +1,10 @@
-// Path: Assets/_SenderoAR/Core/Bootstrap/AppBootstrapper.cs
-
 using System;
 using System.Collections;
-using Unity.XR.CoreUtils;              // ← XROrigin vive acá, no en ARFoundation
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
+using SenderoAR.Core.Infrastructure; // ← Inyectamos el acceso a SceneNames
 
 namespace KendalLab.SenderoAR.Core.Bootstrap
 {
@@ -18,24 +17,10 @@ namespace KendalLab.SenderoAR.Core.Bootstrap
     ///   2. Validar disponibilidad de AR en el device
     ///   3. Instanciar servicios y registrarlos en AppContext (Sprint 3+)
     ///   4. Transicionar a la escena de gameplay (_Main, Sprint 1)
-    ///
-    /// Decisión arquitectónica:
-    ///   No se usa framework de DI (Zenject/VContainer) por simplicidad de MVP
-    ///   y para evitar reflection overhead en mobile. Cableado manual via AppContext.
-    ///
-    /// Nota sobre AR Foundation 5.2:
-    ///   Usamos XROrigin (Unity.XR.CoreUtils), introducido en AR Foundation 5.0
-    ///   como reemplazo unificado de ARSessionOrigin (deprecada en 5.x).
-    ///   La API de tracking de imágenes sigue siendo legacy:
-    ///   maxNumberOfMovingImages, trackedImagesChanged, ARTrackedImagesChangedEventArgs.
     /// </summary>
     [DefaultExecutionOrder(-1000)]
     public sealed class AppBootstrapper : MonoBehaviour
     {
-        // ────────────────────────────────────────────────────────────────
-        // Inspector references (cableado vía Editor, no FindObjectOfType)
-        // ────────────────────────────────────────────────────────────────
-
         [Header("AR Foundation 5.2 References")]
         [Tooltip("Drag AR Session GameObject from hierarchy")]
         [SerializeField] private ARSession arSession;
@@ -46,10 +31,6 @@ namespace KendalLab.SenderoAR.Core.Bootstrap
         [Header("Performance")]
         [Tooltip("Target frame rate. 30 FPS fijo según baseline Snapdragon 7 Gen 1")]
         [SerializeField] private int targetFrameRate = 30;
-
-        // ────────────────────────────────────────────────────────────────
-        // Unity lifecycle
-        // ────────────────────────────────────────────────────────────────
 
         private void Awake()
         {
@@ -80,15 +61,18 @@ namespace KendalLab.SenderoAR.Core.Bootstrap
             Debug.Log($"[Bootstrap] AR disponible. Estado: {ARSession.state}");
             Debug.Log($"[Bootstrap] XR Origin camera: {xrOrigin.Camera.name}");
 
-            Debug.Log($"[Bootstrap] AR disponible. Estado: {ARSession.state}");
-
             AppContext.Initialize();
-            // TODO Sprint 1: SceneManager.LoadSceneAsync("_Main", LoadSceneMode.Single);
-        }
 
-        // ────────────────────────────────────────────────────────────────
-        // Configuration
-        // ────────────────────────────────────────────────────────────────
+            // Reemplazo del TODO del Sprint 1: Lógica asíncrona de transición
+            Debug.Log("[Bootstrap] Transicionando a escena _Main...");
+            var op = SceneManager.LoadSceneAsync(SceneNames.Main, LoadSceneMode.Single);
+            if (op != null)
+            {
+                op.allowSceneActivation = true;
+                while (!op.isDone)
+                    yield return null;
+            }
+        }
 
         private void ConfigurePlatform()
         {
