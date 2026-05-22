@@ -1,6 +1,6 @@
 # =============================================================
 # .gitignore — Sendero AR (Unity 2022.3.62f3)
-# Última actualización: 15 de Mayo 2026
+# Última actualización: 22 de Mayo 2026
 # =============================================================
 
 # =============================================================
@@ -43,10 +43,17 @@ crashlytics-build.properties
 # =============================================================
 # SENDERO AR - Critical Exclusion: Art Folder
 # =============================================================
-# Contiene modelos 3D, audios TTS, XRReferenceImageLibrary,
-# texturas pesadas y sprites de UI. Demasiado pesado para Git.
+# Contiene modelos 3D, audios TTS, texturas pesadas y sprites de UI.
+# Demasiado pesado para Git.
 Assets/_SenderoAR/Art/
 Assets/_SenderoAR/Art.meta
+
+# === Sprint 1 — AR Image Tracking sources ===
+# Las imágenes crudas de tracking (placeholder_marker.png) viven 
+# en Assets/_SenderoAR/Art/Tracking/ y heredan la exclusión superior.
+#
+# EXCEPCIÓN CRÍTICA: La base de datos compilada (SenderoTrackingLibrary.asset)
+# vive en Assets/_SenderoAR/AR/Libraries/ y SÍ se commitea.
 
 # =============================================================
 # VISUAL STUDIO / RIDER / VS CODE - Solution & Project Files
