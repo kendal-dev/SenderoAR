@@ -9,21 +9,15 @@ namespace SenderoAR.Core.AR
     /// Sprint 1 Provisional Controller. Pre-MVVM. Será reemplazado en Sprint 3
     /// por un binding View ↔ MonumentTrackingViewModel sobre IARTrackingService.
     /// </summary>
-    /// <remarks>
-    /// API: AR Foundation 5.2 legacy.
-    /// - trackedImagesChanged (event)
-    /// - ARTrackedImagesChangedEventArgs (added/updated/removed)
-    /// - maxNumberOfMovingImages (NO requestedMaxNumberOfMovingImages)
-    /// Threading: callbacks llegan en el main thread.
-    /// </remarks>
     [RequireComponent(typeof(ARTrackedImageManager))]
     [DisallowMultipleComponent]
     public sealed class ImageTrackingController : MonoBehaviour
     {
         [Header("Debug Cube Visualization")]
         [SerializeField] private float _debugCubeSize = 0.10f;
-        [SerializeField] private Color _activeColor = new Color(0.0f, 0.85f, 1.0f, 1.0f);
-        [SerializeField] private Color _limitedColor = new Color(1.0f, 0.85f, 0.0f, 1.0f);
+        [SerializeField] private Color _activeColor = new Color(0.0f, 0.85f, 1.0f, 1.0f); // Cyan
+        [SerializeField] private Color _limitedColor = new Color(1.0f, 0.85f, 0.0f, 1.0f); // Amber
+        [SerializeField] private Material _cubeMaterial; // Inyección de dependencia (URP seguro)
 
         [Header("Performance Budget (Samsung A52s)")]
         [SerializeField] private int _targetFrameRate = 30;
@@ -91,8 +85,13 @@ namespace SenderoAR.Core.AR
             cube.transform.localScale = Vector3.one * _debugCubeSize;
 
             var renderer = cube.GetComponent<Renderer>();
-            renderer.material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            renderer.material.color = _activeColor;
+
+            // Asignar el material inyectado de forma segura
+            if (_cubeMaterial != null)
+            {
+                renderer.material = new Material(_cubeMaterial);
+            }
+
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
 
@@ -132,13 +131,13 @@ namespace SenderoAR.Core.AR
                 case TrackingState.Tracking:
                     cube.SetActive(true);
                     if (_spawnedRenderers.TryGetValue(tracked.trackableId, out var rendererActive))
-                        rendererActive.material.color = _activeColor;
+                        rendererActive.material.SetColor("_BaseColor", _activeColor); // Corrección URP
                     break;
 
                 case TrackingState.Limited:
                     cube.SetActive(true);
                     if (_spawnedRenderers.TryGetValue(tracked.trackableId, out var rendererLimited))
-                        rendererLimited.material.color = _limitedColor;
+                        rendererLimited.material.SetColor("_BaseColor", _limitedColor); // Corrección URP
                     break;
 
                 case TrackingState.None:
