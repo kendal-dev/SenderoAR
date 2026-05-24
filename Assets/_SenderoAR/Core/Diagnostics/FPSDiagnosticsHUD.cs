@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-namespace SenderoAR.Core.Debug
+namespace SenderoAR.Core.Diagnostics
 {
     /// <summary>
     /// Disposable runtime overlay for Sprint 1 Day 2 device validation.
@@ -15,7 +15,7 @@ namespace SenderoAR.Core.Debug
     /// Allocation: zero per-frame string heap pressure beyond the four labels.
     /// </remarks>
     [DisallowMultipleComponent]
-    public sealed class FPSDebugHUD : MonoBehaviour
+    public sealed class FPSDiagnosticsHUD : MonoBehaviour
     {
         [SerializeField] private ARTrackedImageManager _trackedImageManager;
         [SerializeField] private int _fontSize = 28;
