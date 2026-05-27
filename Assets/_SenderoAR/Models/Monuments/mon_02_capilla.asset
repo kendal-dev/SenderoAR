@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9cbe330d1b890e41aaf73aa2fc4cd53, type: 3}
   m_Name: mon_02_capilla
   m_EditorClassIdentifier: 
-  MonumentId: 1750
-  FoundationYear: 0
+  MonumentId: mon_02_capilla
+  FoundationYear: 1750
   GPSCoordinates: {x: -17.8483, y: -60.7428}
   AnchorImageName: capilla_mortuoria
   PhysicalSize: {x: 0.6, y: 0.6}
