@@ -137,7 +137,7 @@ namespace SenderoAR.Core.AR
                 case TrackingState.Limited:
                     cube.SetActive(true);
                     if (_spawnedRenderers.TryGetValue(tracked.trackableId, out var rendererLimited))
-                        rendererLimited.material.SetColor("_BaseColor", _limitedColor); // Corrección URP
+                        rendererLimited.material.SetColor("_BaseColor", _limitedColor);
                     break;
 
                 case TrackingState.None:
