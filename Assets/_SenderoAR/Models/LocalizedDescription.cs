@@ -1,18 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class LocalizedDescription : MonoBehaviour
+namespace SenderoAR.Models
 {
-    // Start is called before the first frame update
-    void Start()
+    [Serializable]
+    public class LocalizedDescription
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        [TextArea(3, 8)] public string Es;
+        [TextArea(3, 8)] public string En;
+        [TextArea(3, 8)] public string Pt;
     }
 }
