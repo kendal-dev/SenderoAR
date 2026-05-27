@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace SenderoAR.Models
@@ -31,5 +30,20 @@ namespace SenderoAR.Models
 
         [Header("Defense Flags")]
         public bool IsPhysicalInDefense;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (string.IsNullOrWhiteSpace(MonumentId))
+            {
+                MonumentId = name;
+            }
+
+            TrackingConfidenceThreshold = Mathf.Clamp01(TrackingConfidenceThreshold);
+
+            if (PhysicalSize.x <= 0f) PhysicalSize.x = 0.60f;
+            if (PhysicalSize.y <= 0f) PhysicalSize.y = 0.60f;
+        }
+#endif
     }
 }
