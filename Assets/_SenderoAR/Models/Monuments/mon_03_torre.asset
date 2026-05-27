@@ -21,7 +21,10 @@ MonoBehaviour:
   Monument3DPrefab: {fileID: 0}
   PivotOffset: {x: 0, y: 0, z: 0}
   Description:
-    Es: 
+    Es: "La Torre del Campanario (c. 1748) es una estructura exenta, separada f\xEDsicamente
+      del templo. Esta separaci\xF3n es una caracter\xEDstica distintiva de la arquitectura
+      misional jesu\xEDtica chiquitana, replicada en otras misiones del circuito
+      UNESCO de la Chiquitania."
     En: 
     Pt: 
   NarrationClips: []

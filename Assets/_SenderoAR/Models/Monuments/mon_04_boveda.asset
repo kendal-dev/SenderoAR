@@ -21,7 +21,10 @@ MonoBehaviour:
   Monument3DPrefab: {fileID: 0}
   PivotOffset: {x: 0, y: 0, z: 0}
   Description:
-    Es: 
+    Es: "La B\xF3veda (1754) fue el antiguo Colegio Misional jesu\xEDtico, hoy convertido
+      en Espacio Cultural Chiquitos. Conserva murales pintados por Gregorio Villarroel
+      en 1810, que fueron restaurados durante la intervenci\xF3n dirigida por el
+      arquitecto suizo Hans Roth entre 1973 y 2000."
     En: 
     Pt: 
   NarrationClips: []

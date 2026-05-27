@@ -21,7 +21,10 @@ MonoBehaviour:
   Monument3DPrefab: {fileID: 0}
   PivotOffset: {x: 0, y: 0, z: 0}
   Description:
-    Es: 
+    Es: "La Capilla Mortuoria o Miserere (c. 1750) es la capilla anexa de ritos f\xFAnebres
+      del Conjunto Misional. Su nombre proviene del Salmo 50: \"Miserere mei, Deus\",
+      entonado durante los oficios de difuntos. Estructura sobria y de peque\xF1a
+      escala, articulada con el cuerpo del templo principal."
     En: 
     Pt: 
   NarrationClips: []

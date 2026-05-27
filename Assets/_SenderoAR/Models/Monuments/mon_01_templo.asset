@@ -21,7 +21,11 @@ MonoBehaviour:
   Monument3DPrefab: {fileID: 0}
   PivotOffset: {x: 0, y: 0, z: 0}
   Description:
-    Es: 
+    Es: "El Templo de San Jos\xE9 de Chiquitos (1745-1760) es el \xFAnico templo
+      jesu\xEDtico chiquitano construido \xEDntegramente en piedra y cal. Fue edificado
+      bajo direcci\xF3n del Padre Bartolom\xE9 de Mora con mano de obra Penoca, integrando
+      a m\xE1s de 5,000 ind\xEDgenas en el proyecto misional. Forma parte del Conjunto
+      Misional declarado Patrimonio Mundial UNESCO en 1990."
     En: 
     Pt: 
   NarrationClips: []

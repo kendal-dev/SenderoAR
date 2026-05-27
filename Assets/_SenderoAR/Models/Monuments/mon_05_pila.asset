@@ -21,7 +21,11 @@ MonoBehaviour:
   Monument3DPrefab: {fileID: 0}
   PivotOffset: {x: 0, y: 0, z: 0}
   Description:
-    Es: 
+    Es: "La Pila Bautismal de Piedra (c. 1652) presenta una anomal\xEDa cronol\xF3gica
+      acad\xE9micamente notable: data casi un siglo antes que el templo que la alberga
+      (1745-1760). Esto sugiere reutilizaci\xF3n lit\xFArgica de un objeto del primer
+      asentamiento misional, pre-existente al Conjunto monumental actual. Se conserva
+      en el interior del Templo de San Jos\xE9."
     En: 
     Pt: 
   NarrationClips: []
