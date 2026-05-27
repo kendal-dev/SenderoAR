@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KendalLab.SenderoAR.Core.Infrastructure
+namespace SenderoAR.Core.Infrastructure
 {
     public static class AppContext
     {
