@@ -1,0 +1,43 @@
+# =============================================================
+# Sendero AR - normalizacion de fin de linea y merge de YAML Unity
+# =============================================================
+# Sin esta capa, cada checkout en Windows reescribia los .unity y .asset
+# completos (LF -> CRLF) y cualquier diff de escena era ilegible.
+
+* text=auto eol=lf
+
+# --- Assets serializados de Unity: texto, merge con UnityYAMLMerge ---
+*.unity     text eol=lf merge=unityyamlmerge diff
+*.prefab    text eol=lf merge=unityyamlmerge diff
+*.asset     text eol=lf merge=unityyamlmerge diff
+*.mat       text eol=lf merge=unityyamlmerge diff
+*.anim      text eol=lf merge=unityyamlmerge diff
+*.controller text eol=lf merge=unityyamlmerge diff
+*.meta      text eol=lf merge=unityyamlmerge diff
+*.asmdef    text eol=lf
+*.cs        text eol=lf diff=csharp
+*.shader    text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+
+# --- Binarios: nunca normalizar, nunca intentar diff textual ---
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.tif       binary
+*.tga       binary
+*.psd       binary
+*.fbx       binary
+*.obj       binary
+*.ogg       binary
+*.wav       binary
+*.mp3       binary
+*.ttf       binary
+*.otf       binary
+*.dll       binary
+*.so        binary
+*.aar       binary
+*.apk       binary
+*.aab       binary
+*.unitypackage binary

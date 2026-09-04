@@ -45,15 +45,22 @@ crashlytics-build.properties
 # =============================================================
 # Contiene modelos 3D, audios TTS, texturas pesadas y sprites de UI.
 # Demasiado pesado para Git.
-Assets/_SenderoAR/Art/
-Assets/_SenderoAR/Art.meta
+# Todo Art/ queda fuera (modelos 3D, audio, texturas pesadas)...
+Assets/_SenderoAR/Art/**
 
-# === Sprint 1 — AR Image Tracking sources ===
-# Las imágenes crudas de tracking (placeholder_marker.png) viven 
-# en Assets/_SenderoAR/Art/Tracking/ y heredan la exclusión superior.
-#
-# EXCEPCIÓN CRÍTICA: La base de datos compilada (SenderoTrackingLibrary.asset)
-# vive en Assets/_SenderoAR/AR/Libraries/ y SÍ se commitea.
+# ...MENOS las fuentes de tracking. La SenderoTrackingLibrary.asset SI se
+# commitea, pero NO es autocontenida: guarda el GUID de la textura fuente,
+# no sus pixeles. Con Art/ excluida entera, un clone limpio traia la libreria
+# apuntando a una imagen inexistente -> ARCore no puede compilar el imgdb y la
+# app no reconoce ningun marcador. Auditoria del 04/09/2026.
+!Assets/_SenderoAR/Art/
+!Assets/_SenderoAR/Art/Tracking/
+!Assets/_SenderoAR/Art/Tracking/**
+!Assets/_SenderoAR/Art/Tracking.meta
+
+# Originales pesados fuera de Assets/ (Unity no los importa, Git no los sube).
+# Ahi vive el placeholder_marker de 3872 px del que sale el de 1024 px.
+_source_assets/
 
 # =============================================================
 # VISUAL STUDIO / RIDER / VS CODE - Solution & Project Files
