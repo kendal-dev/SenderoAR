@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -6,14 +7,20 @@ using UnityEngine.XR.ARSubsystems;
 namespace SenderoAR.Core.AR
 {
     /// <summary>
-    /// Sprint 1 provisional watcher. Emits a warning log when a tracked
-    /// image stays in TrackingState.Limited beyond the configured timeout.
+    /// Sprint 1 provisional watcher. Emite un warning cuando una imagen trackeada
+    /// permanece en TrackingState.Limited mas alla del timeout configurado.
     /// </summary>
     /// <remarks>
-    /// Implements the VIO Drift Timeout pattern from 03_AR_Tracking_Specs.md §10.
-    /// Despawn responsibility is intentionally deferred to the Sprint 3
-    /// IARTrackingService implementation; this watcher is observation-only
-    /// and never mutates scene state. Threading: Unity main thread.
+    /// Implementa el patron VIO Drift Timeout de 03_AR_Tracking_Specs.md seccion 10.
+    /// El despawn queda deliberadamente diferido a la implementacion de
+    /// IARTrackingService (Sprint 3): este watcher solo observa, nunca muta la
+    /// escena. Threading: Unity main thread.
+    ///
+    /// ESTADO POR IMAGEN, NO GLOBAL: la version de Sprint 1 guardaba un unico
+    /// _lastState para todas las imagenes. Con una sola imagen (el PoC) daba el
+    /// resultado correcto; con las 5 del catalogo, la segunda imagen pisaba el
+    /// estado de la primera y el watchdog se cancelaba o se disparaba con el
+    /// monumento equivocado. El estado se lleva ahora por TrackableId.
     /// </remarks>
     [DisallowMultipleComponent]
     public sealed class TrackingLimitedTimeoutWatcher : MonoBehaviour
@@ -23,14 +30,21 @@ namespace SenderoAR.Core.AR
         [SerializeField] private ARTrackedImageManager _trackedImageManager;
         [SerializeField] private float _limitedTimeoutSeconds = 5f;
 
-        private Coroutine _watchdog;
-        private TrackingState _lastState = TrackingState.None;
+        private readonly Dictionary<TrackableId, TrackingState> _lastStates = new();
+        private readonly Dictionary<TrackableId, Coroutine> _watchdogs = new();
 
         private void Awake()
         {
             if (_trackedImageManager == null)
             {
                 _trackedImageManager = FindObjectOfType<ARTrackedImageManager>();
+            }
+
+            if (_trackedImageManager == null)
+            {
+                Debug.LogError(
+                    $"{LOG_TAG} No hay ARTrackedImageManager en la escena. " +
+                    "El watchdog de Limited queda inerte.", this);
             }
         }
 
@@ -48,61 +62,80 @@ namespace SenderoAR.Core.AR
             {
                 _trackedImageManager.trackedImagesChanged -= OnTrackedImagesChanged;
             }
-            StopWatchdog();
+            StopAllWatchdogs();
         }
 
         private void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs args)
         {
             foreach (var img in args.added)
             {
-                EvaluateState(img.trackingState);
+                EvaluateState(img.trackableId, img.referenceImage.name, img.trackingState);
             }
             foreach (var img in args.updated)
             {
-                EvaluateState(img.trackingState);
+                EvaluateState(img.trackableId, img.referenceImage.name, img.trackingState);
             }
             foreach (var img in args.removed)
             {
-                EvaluateState(TrackingState.None);
+                StopWatchdog(img.trackableId);
+                _lastStates.Remove(img.trackableId);
             }
         }
 
-        private void EvaluateState(TrackingState newState)
+        private void EvaluateState(TrackableId id, string imageName, TrackingState newState)
         {
-            if (newState == TrackingState.Limited && _lastState != TrackingState.Limited)
+            _lastStates.TryGetValue(id, out var previous);
+
+            if (newState == TrackingState.Limited && previous != TrackingState.Limited)
             {
-                StopWatchdog();
-                _watchdog = StartCoroutine(LimitedTimeoutRoutine());
-            }
-            else if (newState != TrackingState.Limited)
-            {
-                StopWatchdog();
+                StopWatchdog(id);
+                _lastStates[id] = newState;
+                _watchdogs[id] = StartCoroutine(LimitedTimeoutRoutine(id, imageName));
+                return;
             }
 
-            _lastState = newState;
+            if (newState != TrackingState.Limited)
+            {
+                StopWatchdog(id);
+            }
+
+            _lastStates[id] = newState;
         }
 
-        private IEnumerator LimitedTimeoutRoutine()
+        private IEnumerator LimitedTimeoutRoutine(TrackableId id, string imageName)
         {
             yield return new WaitForSeconds(_limitedTimeoutSeconds);
 
-            if (_lastState == TrackingState.Limited)
+            if (_lastStates.TryGetValue(id, out var state) && state == TrackingState.Limited)
             {
-                UnityEngine.Debug.LogWarning(
-                    $"{LOG_TAG} TrackingState.Limited exceeded {_limitedTimeoutSeconds:F1}s. " +
-                    "Sprint 3 IARTrackingService will force despawn on this trigger.");
+                Debug.LogWarning(
+                    $"{LOG_TAG} '{imageName}' lleva mas de {_limitedTimeoutSeconds:F1}s en " +
+                    "TrackingState.Limited. Sprint 3 IARTrackingService forzara el despawn " +
+                    "con este mismo disparador.");
             }
 
-            _watchdog = null;
+            _watchdogs.Remove(id);
         }
 
-        private void StopWatchdog()
+        private void StopWatchdog(TrackableId id)
         {
-            if (_watchdog != null)
+            if (_watchdogs.TryGetValue(id, out var routine))
             {
-                StopCoroutine(_watchdog);
-                _watchdog = null;
+                if (routine != null)
+                    StopCoroutine(routine);
+                _watchdogs.Remove(id);
             }
+        }
+
+        private void StopAllWatchdogs()
+        {
+            foreach (var routine in _watchdogs.Values)
+            {
+                if (routine != null)
+                    StopCoroutine(routine);
+            }
+            _watchdogs.Clear();
+            _lastStates.Clear();
         }
     }
 }

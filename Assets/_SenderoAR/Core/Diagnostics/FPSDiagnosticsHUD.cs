@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -5,14 +6,19 @@ using UnityEngine.XR.ARSubsystems;
 namespace SenderoAR.Core.Diagnostics
 {
     /// <summary>
-    /// Disposable runtime overlay for Sprint 1 Day 2 device validation.
-    /// Renders FPS, current AR tracking state, last tracked image name
-    /// and Limited-state duration counter via IMGUI.
+    /// Overlay descartable para la validacion en dispositivo del Sprint 1.
+    /// Muestra FPS, estado de tracking, ultima imagen trackeada y duracion del
+    /// estado Limited via IMGUI.
     /// </summary>
     /// <remarks>
-    /// Lifecycle: Sprint 1 only. Removed before Sprint 3 MVVM refactor.
+    /// Ciclo de vida: solo Sprint 1. Se elimina antes del refactor MVVM del Sprint 3.
     /// Threading: Unity main thread (Update + OnGUI).
-    /// Allocation: zero per-frame string heap pressure beyond the four labels.
+    ///
+    /// ALLOCATION: OnGUI se ejecuta varias veces por frame (Layout y Repaint). La
+    /// version anterior interpolaba las cuatro etiquetas dentro de OnGUI, o sea
+    /// ~8 strings nuevos por frame: el instrumento que mide los FPS estaba
+    /// generando la basura que hace caer los FPS. Las etiquetas se construyen
+    /// ahora solo cuando su valor cambia.
     /// </remarks>
     [DisallowMultipleComponent]
     public sealed class FPSDiagnosticsHUD : MonoBehaviour
@@ -23,12 +29,19 @@ namespace SenderoAR.Core.Diagnostics
 
         private float _accumulatedFrames;
         private float _accumulatedTime;
-        private float _currentFps;
 
+        private readonly Dictionary<TrackableId, TrackingState> _states = new();
+        private TrackableId _displayedId;
         private TrackingState _lastTrackingState = TrackingState.None;
-        private string _lastImageName = "—";//supuesto cambio
+        private string _lastImageName = "-";
         private float _limitedStateStartTime;
         private float _limitedStateDuration;
+        private float _lastRenderedDuration = -1f;
+
+        private string _fpsLabel = "FPS: --";
+        private string _trackLabel = "Track: None";
+        private string _imageLabel = "Image: -";
+        private string _limitedLabel = "Limited: 0.0s";
 
         private GUIStyle _labelStyle;
 
@@ -63,14 +76,23 @@ namespace SenderoAR.Core.Diagnostics
 
             if (_accumulatedTime >= _sampleInterval)
             {
-                _currentFps = _accumulatedFrames / _accumulatedTime;
+                var fps = _accumulatedFrames / _accumulatedTime;
+                _fpsLabel = string.Concat("FPS: ", fps.ToString("F1"));
                 _accumulatedFrames = 0f;
                 _accumulatedTime = 0f;
             }
 
-            if (_lastTrackingState == TrackingState.Limited)
+            if (_lastTrackingState != TrackingState.Limited)
+                return;
+
+            _limitedStateDuration = Time.unscaledTime - _limitedStateStartTime;
+
+            // Reconstruir la etiqueta solo cuando cambia la decima de segundo.
+            var rounded = Mathf.Floor(_limitedStateDuration * 10f) / 10f;
+            if (!Mathf.Approximately(rounded, _lastRenderedDuration))
             {
-                _limitedStateDuration = Time.unscaledTime - _limitedStateStartTime;
+                _lastRenderedDuration = rounded;
+                _limitedLabel = string.Concat("Limited: ", rounded.ToString("F1"), "s");
             }
         }
 
@@ -78,19 +100,29 @@ namespace SenderoAR.Core.Diagnostics
         {
             foreach (var img in args.added)
             {
-                UpdateState(img.trackingState, img.referenceImage.name);
+                _states[img.trackableId] = img.trackingState;
+                UpdateState(img.trackableId, img.trackingState, img.referenceImage.name);
             }
             foreach (var img in args.updated)
             {
-                UpdateState(img.trackingState, img.referenceImage.name);
+                _states[img.trackableId] = img.trackingState;
+                UpdateState(img.trackableId, img.trackingState, img.referenceImage.name);
             }
             foreach (var img in args.removed)
             {
-                UpdateState(TrackingState.None, "—");
+                _states.Remove(img.trackableId);
+
+                // Solo limpiar el HUD si la imagen que se fue es la que se estaba
+                // mostrando. Antes, perder una imagen borraba el estado de otra
+                // que seguia trackeando.
+                if (img.trackableId == _displayedId)
+                {
+                    UpdateState(TrackableId.invalidId, TrackingState.None, "-");
+                }
             }
         }
 
-        private void UpdateState(TrackingState newState, string imageName)
+        private void UpdateState(TrackableId id, TrackingState newState, string imageName)
         {
             if (newState == TrackingState.Limited && _lastTrackingState != TrackingState.Limited)
             {
@@ -100,10 +132,23 @@ namespace SenderoAR.Core.Diagnostics
             else if (newState != TrackingState.Limited)
             {
                 _limitedStateDuration = 0f;
+                _lastRenderedDuration = -1f;
+                _limitedLabel = "Limited: 0.0s";
             }
 
-            _lastTrackingState = newState;
-            _lastImageName = imageName;
+            if (newState != _lastTrackingState)
+            {
+                _lastTrackingState = newState;
+                _trackLabel = string.Concat("Track: ", newState.ToString());
+            }
+
+            if (!string.Equals(imageName, _lastImageName))
+            {
+                _lastImageName = imageName;
+                _imageLabel = string.Concat("Image: ", imageName);
+            }
+
+            _displayedId = id;
         }
 
         private void OnGUI()
@@ -113,17 +158,10 @@ namespace SenderoAR.Core.Diagnostics
             var rect = new Rect(16f, 16f, 640f, 220f);
             GUI.Box(rect, GUIContent.none);
 
-            GUI.Label(new Rect(rect.x + 12f, rect.y + 8f, rect.width, 40f),
-                $"FPS: {_currentFps:F1}", _labelStyle);
-
-            GUI.Label(new Rect(rect.x + 12f, rect.y + 56f, rect.width, 40f),
-                $"Track: {_lastTrackingState}", _labelStyle);
-
-            GUI.Label(new Rect(rect.x + 12f, rect.y + 104f, rect.width, 40f),
-                $"Image: {_lastImageName}", _labelStyle);
-
-            GUI.Label(new Rect(rect.x + 12f, rect.y + 152f, rect.width, 40f),
-                $"Limited: {_limitedStateDuration:F1}s", _labelStyle);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 8f, rect.width, 40f), _fpsLabel, _labelStyle);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 56f, rect.width, 40f), _trackLabel, _labelStyle);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 104f, rect.width, 40f), _imageLabel, _labelStyle);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 152f, rect.width, 40f), _limitedLabel, _labelStyle);
         }
 
         private void EnsureStyle()

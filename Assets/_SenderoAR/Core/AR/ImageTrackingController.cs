@@ -6,23 +6,34 @@ using UnityEngine.XR.ARSubsystems;
 namespace SenderoAR.Core.AR
 {
     /// <summary>
-    /// Sprint 1 Provisional Controller. Pre-MVVM. Será reemplazado en Sprint 3
-    /// por un binding View ↔ MonumentTrackingViewModel sobre IARTrackingService.
+    /// Sprint 1 Provisional Controller. Pre-MVVM. Sera reemplazado en Sprint 3
+    /// por un binding View - MonumentTrackingViewModel sobre IARTrackingService.
     /// </summary>
+    /// <remarks>
+    /// COLOR POR ESTADO: se aplica con MaterialPropertyBlock, no con
+    /// Renderer.material. Renderer.material instancia un Material nuevo por
+    /// renderer y esa instancia NO se libera al destruir el GameObject, asi que
+    /// cada aparicion/desaparicion de un marcador dejaba un Material huerfano en
+    /// memoria. El property block escribe sobre el material compartido sin
+    /// instanciar nada: cero allocation por cambio de estado.
+    /// </remarks>
     [RequireComponent(typeof(ARTrackedImageManager))]
     [DisallowMultipleComponent]
     public sealed class ImageTrackingController : MonoBehaviour
     {
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+
         [Header("Debug Cube Visualization")]
         [SerializeField] private float _debugCubeSize = 0.10f;
         [SerializeField] private Color _activeColor = new Color(0.0f, 0.85f, 1.0f, 1.0f); // Cyan
         [SerializeField] private Color _limitedColor = new Color(1.0f, 0.85f, 0.0f, 1.0f); // Amber
-        [SerializeField] private Material _cubeMaterial; // Inyección de dependencia (URP seguro)
+        [SerializeField] private Material _cubeMaterial; // Inyeccion de dependencia (URP seguro)
 
         [Header("Performance Budget (Samsung A52s)")]
         [SerializeField] private int _targetFrameRate = 30;
 
         private ARTrackedImageManager _manager;
+        private MaterialPropertyBlock _propertyBlock;
         private readonly Dictionary<TrackableId, GameObject> _spawnedCubes = new();
         private readonly Dictionary<TrackableId, Renderer> _spawnedRenderers = new();
 
@@ -31,8 +42,19 @@ namespace SenderoAR.Core.AR
             Application.targetFrameRate = _targetFrameRate;
             QualitySettings.vSyncCount = 0;
 
+            _propertyBlock = new MaterialPropertyBlock();
+
             _manager = GetComponent<ARTrackedImageManager>();
             _manager.requestedMaxNumberOfMovingImages = 1;
+
+            if (_cubeMaterial == null)
+            {
+                Debug.LogError(
+                    "[Sendero/ITC] _cubeMaterial no esta asignado en el inspector. " +
+                    "El cubo usara el Default-Material del built-in pipeline y se vera " +
+                    "MAGENTA bajo URP. Asignar Assets/_SenderoAR/Core/Materials/DebugCubeMat.mat.",
+                    this);
+            }
         }
 
         private void OnEnable()
@@ -84,19 +106,17 @@ namespace SenderoAR.Core.AR
             cube.transform.localRotation = Quaternion.identity;
             cube.transform.localScale = Vector3.one * _debugCubeSize;
 
-            var renderer = cube.GetComponent<Renderer>();
+            var cubeRenderer = cube.GetComponent<Renderer>();
 
-            // Asignar el material inyectado de forma segura
+            // sharedMaterial (no .material): no instancia y por lo tanto no filtra.
             if (_cubeMaterial != null)
-            {
-                renderer.material = new Material(_cubeMaterial);
-            }
+                cubeRenderer.sharedMaterial = _cubeMaterial;
 
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
+            cubeRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            cubeRenderer.receiveShadows = false;
 
             _spawnedCubes[tracked.trackableId] = cube;
-            _spawnedRenderers[tracked.trackableId] = renderer;
+            _spawnedRenderers[tracked.trackableId] = cubeRenderer;
 
             ApplyTrackingState(tracked);
         }
@@ -130,14 +150,12 @@ namespace SenderoAR.Core.AR
             {
                 case TrackingState.Tracking:
                     cube.SetActive(true);
-                    if (_spawnedRenderers.TryGetValue(tracked.trackableId, out var rendererActive))
-                        rendererActive.material.SetColor("_BaseColor", _activeColor); // Corrección URP
+                    SetCubeColor(tracked.trackableId, _activeColor);
                     break;
 
                 case TrackingState.Limited:
                     cube.SetActive(true);
-                    if (_spawnedRenderers.TryGetValue(tracked.trackableId, out var rendererLimited))
-                        rendererLimited.material.SetColor("_BaseColor", _limitedColor);
+                    SetCubeColor(tracked.trackableId, _limitedColor);
                     break;
 
                 case TrackingState.None:
@@ -145,6 +163,16 @@ namespace SenderoAR.Core.AR
                     cube.SetActive(false);
                     break;
             }
+        }
+
+        private void SetCubeColor(TrackableId id, Color color)
+        {
+            if (!_spawnedRenderers.TryGetValue(id, out var cubeRenderer) || cubeRenderer == null)
+                return;
+
+            cubeRenderer.GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor(BaseColorId, color);
+            cubeRenderer.SetPropertyBlock(_propertyBlock);
         }
     }
 }
