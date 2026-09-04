@@ -1,0 +1,51 @@
+name: Build Android (manual)
+
+# NO corre solo. Requiere activar una licencia de Unity en los secrets del
+# repositorio, y consume minutos de GitHub Actions (~20-40 min por build).
+#
+# Antes de usarlo, cargar en Settings > Secrets and variables > Actions:
+#   UNITY_LICENSE     contenido del .ulf (Personal) - ver game.ci/docs
+#   UNITY_EMAIL       correo de la cuenta Unity
+#   UNITY_PASSWORD    contrasena de la cuenta Unity
+#
+# Sin esos tres secrets el job falla en el paso de activacion. Por eso el
+# disparador es manual: un workflow que falla en cada push es peor que no tenerlo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Plataforma"
+        required: true
+        default: Android
+        type: choice
+        options: [Android]
+
+jobs:
+  build:
+    name: Build ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ inputs.target }}-${{ hashFiles('Packages/manifest.json') }}
+          restore-keys: Library-${{ inputs.target }}-
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 2022.3.62f3
+          targetPlatform: ${{ inputs.target }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SenderoAR-${{ inputs.target }}
+          path: build

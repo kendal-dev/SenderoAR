@@ -1,0 +1,36 @@
+name: CI
+
+# Integridad del repositorio. No necesita licencia de Unity ni el editor:
+# valida que un clone limpio sea capaz de producir la misma app.
+# El build de APK vive en build-android.yml (manual, requiere licencia).
+
+on:
+  push:
+    branches: [main, "feat/**", "fix/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  integridad:
+    name: Integridad del proyecto Unity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validar integridad del repo
+        run: python Tools/validate_project.py
+
+      - name: Verificar que ProjectVersion no cambio sin aviso
+        run: |
+          esperada="2022.3.62f3"
+          actual=$(grep -oP 'm_EditorVersion:\s*\K.*' ProjectSettings/ProjectVersion.txt | tr -d '\r')
+          echo "Unity declarada: $actual (esperada $esperada)"
+          if [ "$actual" != "$esperada" ]; then
+            echo "::error::La version de Unity cambio a $actual. Actualizar README y este workflow a proposito, no por accidente."
+            exit 1
+          fi
