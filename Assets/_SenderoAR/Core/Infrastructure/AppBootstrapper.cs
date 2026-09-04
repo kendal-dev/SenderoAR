@@ -5,13 +5,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 using SenderoAR.Core.Infrastructure;
 
-namespace KendalLab.SenderoAR.Core.Infrastructure
+namespace SenderoAR.Core.Infrastructure
 {
     [DefaultExecutionOrder(-1000)]
     public sealed class AppBootstrapper : MonoBehaviour
     {
         [Header("Performance")]
-        [Tooltip("Target frame rate. 30 FPS fijo según baseline Snapdragon 7 Gen 1")]
+        [Tooltip("Target frame rate. 30 FPS fijo según baseline Snapdragon 778G + Adreno 642L")]
         [SerializeField] private int targetFrameRate = 30;
 
         private void Awake()

@@ -26,7 +26,7 @@ namespace SenderoAR.Core.Diagnostics
         private float _currentFps;
 
         private TrackingState _lastTrackingState = TrackingState.None;
-        private string _lastImageName = "—";
+        private string _lastImageName = "—";//supuesto cambio
         private float _limitedStateStartTime;
         private float _limitedStateDuration;
 
