@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using SenderoAR.Models;
-using UnityEditor;
 using UnityEngine;
 
 namespace SenderoAR.Tests.EditMode
@@ -11,7 +10,7 @@ namespace SenderoAR.Tests.EditMode
     /// </summary>
     /// <remarks>
     /// El arreglo _monuments es privado y serializado: se carga con
-    /// SerializedObject, el mismo camino que usa el Inspector, en vez de
+    /// TestAssets.SetMonuments (SerializedObject, el mismo camino que usa el Inspector) en vez de
     /// reflexion sobre el campo. Si el campo cambia de nombre, el test falla
     /// en FindProperty con un mensaje claro.
     /// </remarks>
@@ -113,15 +112,7 @@ namespace SenderoAR.Tests.EditMode
 
         private void SetMonuments(params MonumentDataSO[] monuments)
         {
-            var serialized = new SerializedObject(_catalog);
-            var array = serialized.FindProperty("_monuments");
-            Assert.IsNotNull(array, "MonumentCatalogSO ya no serializa '_monuments'.");
-
-            array.arraySize = monuments.Length;
-            for (int i = 0; i < monuments.Length; i++)
-                array.GetArrayElementAtIndex(i).objectReferenceValue = monuments[i];
-
-            serialized.ApplyModifiedPropertiesWithoutUndo();
+            TestAssets.SetMonuments(_catalog, monuments);
         }
     }
 }

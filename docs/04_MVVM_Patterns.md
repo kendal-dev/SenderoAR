@@ -10,7 +10,7 @@
 
 | Pieza | Estado |
 |---|---|
-| 5 contratos en `Core/Contracts/` | ✅ Escritos y documentados. **Cero implementaciones** |
+| 5 contratos en `Core/Contracts/` | ✅ Escritos y documentados. Implementado: `IMonumentRepository` (`Core/Repositories/CatalogMonumentRepository`). Los otros 4, sin implementar |
 | Modelos, enums y `ScriptableObject`s en `Models/` | ✅ |
 | Composition Root (`AppBootstrapper`) | ✅ Valida AR, fija 30 FPS y portrait, inicializa `AppContext`, carga `_Main` |
 | `AppContext` | 🟡 **Solo una compuerta**: `IsReady`, `Initialize()`, `Reset()`, `EnsureReady()`. **No registra ni resuelve servicios** |
@@ -296,8 +296,11 @@ por frame.
 | `ILocalizationService` | `LanguageCode CurrentLanguage` · `void SetLanguage(LanguageCode)` · `event Action<LanguageCode> LanguageChanged` |
 | `IMonumentRepository` | `Task<MonumentSnapshot> GetByIdAsync(string, CancellationToken)` · `Task<IReadOnlyList<MonumentSnapshot>> GetAllAsync(CancellationToken)` · `bool IsReady` |
 
-`IMonumentRepository` es el primero a implementar (`CLAUDE.md` §7): una clase que
-lee `MonumentCatalogSO` y devuelve `MonumentSnapshot`s.
+`IMonumentRepository` está implementado ✅ por `CatalogMonumentRepository` (`Core/Repositories/`):
+lee `MonumentCatalogSO`, construye los `MonumentSnapshot` una vez al crearse (un dato inválido
+falla en el arranque, nombrando el monumento), devuelve `null` para un ID desconocido, lista
+vacía en vez de `null`, respeta el orden del catálogo y garantiza las 3 claves de idioma
+(`""` si falta la traducción). Cubierto por `CatalogMonumentRepositoryTests`.
 
 > 🔁 `MonumentSnapshot` exige un `displayName` no vacío, y `MonumentDataSO` no tenía campo de
 > nombre. Desde el 16/10/2026 tiene `DisplayName` (español), completo en los 5 `.asset` y
