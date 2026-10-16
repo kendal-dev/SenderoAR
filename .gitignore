@@ -40,6 +40,12 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# Carpeta temporal que XR Management crea y vacia durante el build. Su .meta
+# llego a versionarse y el CI lo marco como huerfano (Git no versiona carpetas
+# vacias): 553144d -> b209fd6.
+/[Aa]ssets/XR/Temp/
+/[Aa]ssets/XR/Temp.meta
+
 # =============================================================
 # SENDERO AR - Critical Exclusion: Art Folder
 # =============================================================
