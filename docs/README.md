@@ -35,7 +35,7 @@ es [`CLAUDE.md`](../CLAUDE.md) en la raíz, no estos documentos.
 | [`03_AR_Tracking_Specs.md`](03_AR_Tracking_Specs.md) | Image tracking: marcador físico, librería de referencia, `arcoreimg`, estados, presupuesto de rendimiento | Al tocar `Core/AR/`, la librería de tracking o los marcadores |
 | [`04_MVVM_Patterns.md`](04_MVVM_Patterns.md) | MVVM puro, assembly definitions, Composition Root, binding, convenciones de código | Antes de escribir el primer ViewModel o `.asmdef` |
 | [`05_TTS_Pipeline.md`](05_TTS_Pipeline.md) | Narración trilingüe: proveedores, pipeline batch, Addressables, importer de audio | Antes de implementar `IAudioPlaybackService` |
-| [`06_3D_Pipeline.md`](06_3D_Pipeline.md) | Fotogrametría, retopología, importación a Unity, shaders, texto orbital, miniaturas SLA | Al reemplazar el cubo de debug por contenido real |
+| [`06_3D_Pipeline.md`](06_3D_Pipeline.md) | Fotogrametría, retopología, importación a Unity, shaders, texto orbital (las miniaturas SLA quedaron fuera del MVP) | Al reemplazar el cubo de debug por contenido real |
 | [`07_CICD_Pipeline.md`](07_CICD_Pipeline.md) | Lo que CI hace hoy y lo que estaba planificado (tests, distribución, firma) | Al tocar `.github/workflows/` |
 | [`08_Demo_Mode_Defense.md`](08_Demo_Mode_Defense.md) | Modo demo: decoradores, cache offline Levenshtein, HUD, checklist de defensa | Sprint de pulido y preparación de la defensa |
 | [`09_Lecciones_Unity.md`](09_Lecciones_Unity.md) | Trampas de Unity / URP / AR Foundation / Git en Windows ya pagadas con tiempo | **Antes de depurar cualquier cosa rara.** Probablemente ya pasó |

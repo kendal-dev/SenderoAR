@@ -66,6 +66,13 @@ imprimir en resina y por la fecha de arriba. **Nunca volver a referirse a `mon_0
 
 Las secciones "Datos históricos" son ⚠️ en su totalidad. Las de modelo 3D y animación son 📐.
 
+> 🔁 **Tracking, desde el 16/10/2026**: el alcance del MVP es la **fachada real** (en la
+> defensa, una foto impresa de ella). Las líneas "Tracking" de cada ficha describen el
+> **anclaje 2D del marcador diseñado** del enfoque diorama, retirado (🗄️). Lo que sigue
+> sirviendo de ellas es **qué parte de la fachada** tiene más textura y conviene encuadrar en
+> la foto de referencia. La Pila y la Torre no son fachadas planas: decisión D2 de
+> `CLAUDE.md`. Las líneas "Miniatura física" también quedan fuera del MVP.
+
 ### mon_01_templo — Templo de San José de Chiquitos
 
 **Datos históricos ⚠️**
@@ -160,6 +167,12 @@ impresión. Detalle en [`06_3D_Pipeline.md`](06_3D_Pipeline.md) §10.
 | 3D Content (Sprint 6) | `Monument3DPrefab`, `PivotOffset` | `GameObject`, `Vector3` |
 | Localization & Audio | `Description`, `NarrationClips` | `LocalizedDescription`, `AddressableAudioReference[]` |
 | Defense Flags | `IsPhysicalInDefense` | `bool` |
+
+> 🔁 Con la fachada real como alcance, `PhysicalSize` pasa a ser el **ancho real de la
+> fachada** (lo que va en la librería de campo). Hoy los 5 `.asset` tienen 0.6 × 0.6, que
+> era la base MDF del enfoque diorama: se reemplaza cuando haya medidas (D4). Y
+> `IsPhysicalInDefense` marcaba qué monumentos tenían miniatura; su nuevo significado lo
+> resuelve la tarea C7 de `CLAUDE.md`.
 
 `OnValidate()` (solo editor): copia el nombre del asset a `MonumentId` si está vacío, aplica
 `Clamp01` al umbral y, si un eje de `PhysicalSize` es ≤ 0, lo pone en 0.60 m (no es un mínimo: 0.20 m se respeta). Cubierto por `Tests/EditMode/MonumentDataSOValidationTests`.

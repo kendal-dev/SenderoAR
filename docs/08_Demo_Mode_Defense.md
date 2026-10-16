@@ -297,7 +297,7 @@ tocar la pantalla mientras se señala la mesa.
 
 | Min | Acción | Si falla |
 |---|---|---|
-| 0–2 | Presentación; mostrar las bases en la mesa | — |
+| 0–2 | Presentación; mostrar las fotos impresas de las fachadas y explicar que en el lugar se reconoce la fachada real | Video grabado en el lugar (D6 de `CLAUDE.md`) |
 | 2–5 | Templo: modelo + animación + texto orbital + narración ES | Segundo dispositivo |
 | 5–8 | Cambio ES → EN en vivo (texto y audio) | — |
 | 8–12 | Torre: campanas + texto orbital | Tap-to-place ([`03_`](03_AR_Tracking_Specs.md) §9) |
@@ -322,21 +322,22 @@ sistema.
 - [ ] Build con el símbolo correcto instalado en los dos dispositivos
 - [ ] Paquete pt-BR descargado en ambos
 - [ ] Baterías al 100 %; cargador y cable en la mochila
-- [ ] Bases y miniaturas en cajas rígidas
+- [ ] Fotos impresas de las fachadas, planas y en carpeta rígida (sin dobleces)
+- [ ] Video del reconocimiento en el lugar, en la laptop
 - [ ] Control remoto con pilas
 - [ ] Video de respaldo en dos USB y en la nube
 - [ ] Ensayo completo cronometrado
 
 ### Una hora antes
 - [ ] Mesa de ≥ 1.5 × 1.0 m; luz ≥ 300 lux sin contraluz (idealmente medida en una visita previa)
-- [ ] Bases a 10–15 cm entre sí; miniaturas centradas
+- [ ] Fotos apoyadas planas o fijadas a la pared, separadas entre sí
 - [ ] App abierta en ambos: FPS ≥ 28, red y AI en verde
-- [ ] Prueba rápida de tracking en cada marcador
+- [ ] Prueba rápida de tracking en cada foto impresa (con la librería de demo activa)
 - [ ] Wi-Fi verificado contra `generate_204`
 - [ ] Otras apps cerradas, "No molestar" activado, A52s enchufado
 
 ### Durante
-1. Si un marcador no trackea → pasar al otro dispositivo (el A52s puede estar en throttling).
+1. Si una foto no trackea → pasar al otro dispositivo (el A52s puede estar en throttling).
 2. Si el chatbot no tiene red → el cache responde y la interfaz lo indica; explicarlo.
 3. Si todo falla → pasar al video de respaldo **diciendo que es una grabación**.
 

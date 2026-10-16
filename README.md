@@ -39,11 +39,11 @@
 
 ## 🎯 Visión del Proyecto
 
-**Sendero AR** busca acercar el patrimonio cultural boliviano mediante Realidad Aumentada. El objetivo: que la app reconozca cinco monumentos del Conjunto Misional de San José de Chiquitos, superponga un modelo 3D de cada uno y narre su historia en tres idiomas (Español, Inglés, Portugués), sin necesidad de internet.
+**Sendero AR** busca acercar el patrimonio cultural boliviano mediante Realidad Aumentada. El objetivo: que la app reconozca **la fachada real** de cinco monumentos del Conjunto Misional de San José de Chiquitos, superponga un modelo 3D de cada uno y narre su historia en tres idiomas (Español, Inglés, Portugués), sin necesidad de internet. Lejos del lugar, la misma app reconoce fotos impresas de esas fachadas.
 
-> **Lo que corre hoy:** el reconocimiento de **un marcador impreso de prueba** (20 cm) en un
-> Samsung A52s, con un cubo encima. Si el reconocimiento final será sobre la fachada real o
-> sobre un marcador impreso es una decisión todavía abierta.
+> **Lo que corre hoy:** el reconocimiento de **un marcador impreso de prueba** (20 cm, una
+> imagen de la Misión de San Javier) en un Samsung A52s, con un cubo encima. Todavía no hay
+> fotos de las cinco fachadas en la librería de tracking.
 
 Como complemento online está planificado un chatbot histórico sobre **Gemini** (vía Firebase AI Logic, con el modelo configurable por Remote Config) que responda preguntas sobre las misiones jesuíticas. Diseño en [`docs/02_AI_Architecture.md`](docs/02_AI_Architecture.md).
 

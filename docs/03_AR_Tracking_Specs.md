@@ -24,12 +24,65 @@ Hoy la librería tiene **1 imagen**: `placeholder_marker` (Misión de San Javier
 
 ---
 
-## 2. Arquitectura del marcador físico — 📐 diseño (decisión reabierta)
+## 2. Qué se trackea — ✅ decidido el 16/10/2026
 
-> 🔴 `CLAUDE.md` §7 paso 1 reabre esta decisión ("fachada real vs marcador impreso").
-> Lo que sigue es el diseño de mayo, válido **si** se confirma el marcador impreso.
+**Alcance del MVP (Daniel, 16/10/2026):** en el lugar, la app reconoce **la fachada real**;
+en la defensa en vivo se escanean **fotos impresas** de esas fachadas. Las tareas que se
+desprenden están en `CLAUDE.md` §7 (D2–D6 y C4–C7).
 
-### Enfoque diorama
+### 2.1. La fachada real — 📐 diseño
+
+- **La imagen de referencia es una foto frontal de la fachada**: tomada de frente, sin
+  perspectiva fuerte, con luz pareja, en alta resolución y recortada a la parte plana y
+  característica. La misma foto sirve para el campo y para la demo.
+- **`Specify Size` = ancho real de la fachada en metros**, medido o con fuente (regla 4).
+  ARCore y ARKit lo usan para estimar distancia y escala: si no coincide con lo que la
+  cámara ve, el contenido aparece a la distancia y la escala equivocadas.
+- **Monumentos que no son una fachada plana** (decisión D2 de `CLAUDE.md`):
+  - *Pila Bautismal*: objeto curvo dentro del templo. Una foto de su cara tallada es la
+    opción más directa, pero el image tracking supone una superficie plana ⚠️: hay que
+    probarlo antes de comprometerse.
+  - *Torre*: volumen de tres cuerpos. Lo más plano es el primer cuerpo.
+- **Riesgos de trackear una fachada al aire libre** ⚠️ (a verificar en el lugar, D6):
+  - La luz cambia en el día: sombras que se mueven sobre la piedra pueden bajar el
+    reconocimiento. Si pasa, se agrega más de una foto por fachada, de distintos horarios (C5).
+  - Gente, autos y árboles delante de la fachada tapan partes de la imagen.
+  - La distancia: la fachada tiene que ocupar buena parte del cuadro, así que hay que estar
+    lejos, y la perspectiva desde abajo deforma la imagen.
+
+### 2.2. Las fotos impresas en la defensa — 📐 diseño
+
+- Son **las mismas imágenes** de referencia, impresas en papel **mate**: el brillo y el
+  laminado brillante generan reflejos que rompen el tracking (ver §7, *prohibido brillante*).
+- Impresas planas (sin dobleces), sin recortar bordes y a un tamaño que se lea bien a
+  distancia de brazo. Lo validado hasta hoy es **20 cm en el A52s**; tamaños mayores hay que
+  probarlos (D5, D7).
+- **El ancho impreso en metros es el `Specify Size` de la librería de demo.**
+
+### 2.3. Dos librerías, mismas texturas — 📐 diseño (tarea C4)
+
+| Librería | `Specify Size` | Cuándo |
+|---|---|---|
+| `SenderoTrackingLibrary` | Ancho real de cada fachada | En el lugar |
+| `SenderoTrackingLibrary_Demo` | Ancho de cada foto impresa | Defensa y pruebas en casa |
+
+- Mismas texturas y **mismos nombres de imagen**, así `AnchorImageName` resuelve igual en
+  las dos.
+- Se elige **al arrancar**: `ARTrackedImageManager.referenceLibrary` se asigna antes de que
+  el manager se habilite. Cómo se elige (ajuste en la app, símbolo de compilación o un
+  `ScriptableObject` de configuración) se decide al implementar.
+- El contenido se escala con **`ARTrackedImage.size`**, de modo que el mismo prefab se vea
+  proporcionado sobre una foto de 30 cm y sobre una fachada de varios metros.
+- El validador (`Tools/validate_project.py`) se extiende para comprobar que las dos
+  librerías apunten a las mismas imágenes versionadas.
+
+### 2.4. 🗄️ Enfoque diorama — fuera del MVP desde el 16/10/2026
+
+> Diseño de mayo para el marcador impreso, retirado al decidir la fachada real. Se conserva
+> por si se retoma. Lo mismo vale para §4–§6 (diseño del marcador) y para las bases y
+> miniaturas de §7 y de `06_` §7.
+
+#### Enfoque diorama
 
 1. **Base MDF de 12 mm, 60 × 60 cm.**
 2. **Vinilo mate laminado** pegado encima, con el marcador 2D.
@@ -38,7 +91,7 @@ Hoy la librería tiene **1 imagen**: `placeholder_marker` (Misión de San Javier
 El tracking opera sobre el vinilo (lo que ARCore y ARKit soportan igual). La app superpone
 un modelo digital más detallado y animado sobre la miniatura.
 
-### Por qué 60 × 60 cm
+#### Por qué 60 × 60 cm
 
 | Tamaño | Veredicto |
 |---|---|
@@ -49,23 +102,23 @@ un modelo digital más detallado y animado sobre la miniatura.
 > ⚠️ Los porcentajes de ocupación del cuadro son cálculos de mayo, no mediciones. Lo medido
 > es: **20 cm funciona en el A52s** a distancia de mano.
 
-### Montaje para la defensa
+#### Montaje para la defensa (con bases)
 
 Mesa despejada de al menos 1.5 × 1.0 m · 3 bases en línea, separadas 10–15 cm · ≥ 300 lux,
-sin contraluz de ventana · operador a 30 cm – 1.5 m del marcador.
+sin contraluz de ventana · operador a 30 cm – 1.5 m del marcador. *Con fotos impresas siguen
+valiendo la luz ≥ 300 lux y evitar el contraluz.*
 
 ---
 
 ## 3. `XRReferenceImageLibrary`
 
-### Reglas — 📐 para los marcadores reales
+### Reglas — 📐 para las fotos de fachada
 
 | Parámetro | Valor |
 |---|---|
-| Resolución dentro de Unity | 800×800 a 1024×1024 px |
-| Archivo de imprenta | 300 DPI a 60 × 60 cm = **7323 × 7323 px** |
+| Resolución dentro de Unity | Del orden de 1024 px de lado; ver la recomendación vigente de ARCore al cargarlas |
 | Formato | PNG (o JPEG sin recompresión). Texture Importer: `Compression = None` |
-| **`Specify Size`** | **Obligatorio**, en metros, igual al tamaño impreso (0.60 × 0.60) |
+| **`Specify Size`** | **Obligatorio**, en metros: ancho real de la fachada en la librería de campo, ancho impreso en la de demo (§2.3) |
 | Score `arcoreimg` | **≥ 85** |
 | Nombres de archivo | ASCII puro: sin tildes, espacios ni Unicode |
 | Nombre de la imagen en la librería | **Igual al `AnchorImageName`** del `MonumentDataSO` (`templo_san_jose`, …) |
@@ -80,22 +133,28 @@ comprueba.
 
 ### Nombres de archivo previstos
 
+El archivo se llama como el `AnchorImageName` del monumento, que es también el nombre de
+la imagen dentro de las dos librerías:
+
 ```
-mon_01_templo_marker_60x60.png
-mon_02_capilla_marker_60x60.png
-mon_03_torre_marker_60x60.png
-mon_04_boveda_marker_60x60.png
-mon_05_pila_marker_60x60.png
+templo_san_jose.png
+capilla_mortuoria.png
+torre_campanario.png
+la_boveda.png
+pila_bautismal.png
 ```
+
+Si hace falta más de una foto por fachada (por horario, tarea C5), se agrega un sufijo:
+`templo_san_jose__manana.png`, `templo_san_jose__tarde.png`.
 
 ### Validación con `arcoreimg`
 
 ```bash
 # Linux/macOS (referencia)
-./arcoreimg eval-img --input_image_path=mon_05_pila_marker_60x60.png
+./arcoreimg eval-img --input_image_path=templo_san_jose.png
 
 # Windows
-arcoreimg.exe eval-img --input_image_path=mon_05_pila_marker_60x60.png
+arcoreimg.exe eval-img --input_image_path=templo_san_jose.png
 ```
 
 **Sesgo de Windows:** el binario de Windows da puntajes 20–35 puntos más bajos. Caso
@@ -108,7 +167,11 @@ Exportar a PNG en escala de grises para iterar: es lo que "ve" el algoritmo.
 
 ---
 
-## 4. Diseño del marcador 2D — 📐 diseño
+## 4. Diseño del marcador 2D — 🗄️ fuera del MVP
+
+> Era para el marcador diseñado del enfoque diorama (§2.4). Con fotos de fachada no se
+> diseña nada: el principio de abajo (gradientes de alto contraste repartidos, sin simetría)
+> sirve igual para **elegir y recortar** la foto de referencia.
 
 ### Principio
 
@@ -177,7 +240,11 @@ borde del MDF.
 
 ---
 
-## 5. Diferenciar los 5 marcadores — 📐 diseño
+## 5. Diferenciar los 5 marcadores — 🗄️ fuera del MVP
+
+> Con fotos reales la diferencia la ponen las fachadas mismas. Lo que sigue valiendo: si dos
+> fachadas comparten la misma piedra y el mismo patrón, ARCore puede confundirlas ⚠️. Se
+> comprueba apuntando a cada foto impresa con las otras cuatro en la librería (D7).
 
 Si comparten ruido y paleta, ARCore puede confundirlos (el modelo del Templo aparece sobre
 la base de la Pila). Tres medidas combinadas:
@@ -194,6 +261,10 @@ la base de la Pila). Tres medidas combinadas:
 
 ## 6. Si el score queda bajo 85
 
+> Con una foto de fachada, lo primero es **otra foto o otro recorte** (más textura, menos
+> cielo y menos suelo liso). Los pasos 1 y 3 eran para el marcador diseñado; el 2 (CLAHE)
+> también sirve para fotos.
+
 1. **Ruido fractal**: reescalar el patrón un 30 % hacia abajo (duplica la densidad de cruces).
 2. **Ecualización local (CLAHE)**: Camera Raw → Claridad +20 %, o GIMP → Realce → CLAHE 20 %.
 3. **Eliminar zonas planas**: aislar áreas lisas de la silueta y aplicar un mapa de textura
@@ -201,7 +272,11 @@ la base de la Pila). Tres medidas combinadas:
 
 ---
 
-## 7. Impresión — 📐 diseño
+## 7. Impresión — 🟡 aplica en parte
+
+> Para las fotos impresas de la demo (§2.2) valen: **acabado mate, nada brillante ni
+> satinado** y no recomprimir en JPEG. El vinilo, el MDF y el laminado eran del enfoque
+> diorama (🗄️).
 
 | Parámetro | Valor |
 |---|---|
@@ -350,7 +425,7 @@ Ninguno reemplaza la condición (c) de la Definition of Done: **dispositivo fís
 
 - [ ] `python Tools/validate_project.py` → 0 errores
 - [ ] Cada imagen de la librería tiene su PNG versionado en `Art/Tracking/`
-- [ ] Cada imagen tiene `Specify Size` igual al tamaño impreso
+- [ ] Cada imagen tiene `Specify Size` correcto en cada librería: ancho real (campo) y ancho impreso (demo)
 - [ ] Cada `AnchorImageName` existe en la librería (sin avisos del validador)
 - [ ] Score `arcoreimg` ≥ 85 en Linux/macOS para cada marcador real
 - [ ] `requestedMaxNumberOfMovingImages = 1`

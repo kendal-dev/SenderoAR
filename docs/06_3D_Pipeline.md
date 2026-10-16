@@ -20,7 +20,7 @@
 | Texturas | **ASTC 6×6** | 3.56 bpp, Android e iOS |
 | Polígonos | ≤ 30 000 tris por monumento | Snapdragon 778G / Adreno 642L |
 | Peso | ≤ 5 MB por monumento | |
-| Miniaturas | **3** (Templo, Torre, Pila), resina MSLA | "Camino A": 5 en código, 3 físicas |
+| Miniaturas | 🗄️ **Fuera del MVP desde el 16/10/2026** (antes: 3 de resina, "Camino A") | La defensa usa fotos impresas de las fachadas (`03_` §2.2) |
 
 > El viaje de captura estaba planeado para el ~21/06/2026. `CLAUDE.md` no registra que se
 > haya hecho. Mientras tanto, las fuentes disponibles son fotos web con licencia
@@ -202,7 +202,10 @@ public sealed class MonumentView : MonoBehaviour
 
 ---
 
-## 7. Miniaturas físicas (MSLA)
+## 7. Miniaturas físicas (MSLA) — 🗄️ fuera del MVP
+
+> Retiradas el 16/10/2026 al decidir la fachada real como alcance: en la defensa se
+> escanean fotos impresas. Se conserva el diseño por si se retoma.
 
 ### Proveedores ⚠️ (relevados en mayo; contactos en los documentos originales, fuera del repo)
 

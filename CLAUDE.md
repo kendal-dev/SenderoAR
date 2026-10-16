@@ -24,6 +24,30 @@
 | **Hogar de los KPIs** | `31_CARRERA/07_REGISTRO/kpis-carrera.md` — C2 |
 | **Hogar del diseño técnico** | [`docs/`](docs/README.md) en este repo — importado y contrastado con el código el 16/10/2026 |
 
+### 🟢 Alcance del MVP — decidido por Daniel el 16/10/2026
+
+| | |
+|---|---|
+| **En el lugar** | La app reconoce **la fachada real** de cada monumento en San José de Chiquitos |
+| **En la defensa en vivo** | Se escanean **fotos impresas** de esas mismas fachadas |
+| **Queda fuera del MVP** | El enfoque *diorama* de mayo: bases MDF de 60 × 60 cm, marcadores diseñados con paleta y ruido fractal, miniaturas de resina. Ver `docs/03` §2.4 |
+
+Lo que se sigue de esto, y que el código tiene que respetar:
+
+1. **La imagen de referencia de cada monumento es una foto frontal de su fachada**, no un
+   marcador diseñado. Es la misma imagen en el lugar y en la defensa.
+2. **Dos escalas para la misma foto.** ARCore usa el `Specify Size` para calcular distancia
+   y escala: la fachada mide metros y la foto impresa, centímetros. Diseño propuesto
+   (`docs/03` §2.3): una librería de campo y otra de demo con las mismas texturas y tamaños
+   distintos, elegidas al arrancar, y contenido escalado según `ARTrackedImage.size`.
+3. **La Pila Bautismal no tiene fachada** y la Torre no es plana: hace falta decidir qué
+   imagen representa a cada una (§7.1, D2).
+4. **La condición (c) de la DoD para "reconoce la fachada" solo se cumple en el lugar.** En
+   la defensa, la foto impresa demuestra el mecanismo; la prueba de que funciona sobre la
+   fachada real es un video grabado allá. Se dice así: es la regla de `temas-presentacion-final.md` §3.
+5. Hogar del alcance: el vault (`indice-perfil-proyecto.md`), congelado hasta el 31/12.
+   Esta decisión vive acá hasta que Daniel la pase allá.
+
 ### Antes de escribir código, leer en `docs/`
 
 | Al tocar… | Leer |
@@ -112,7 +136,13 @@ aplican** a este proyecto.
 
 🔴 **La regla de cualquier demo** (de `temas-presentacion-final.md` §3): se muestra solo lo
 que corre ese día; lo que no corre se dice como "lo que falta". Hoy corre el reconocimiento
-del marcador impreso con un cubo encima. Nada más.
+del marcador impreso de prueba (la Misión de San Javier, no uno de los 5 monumentos) con un
+cubo encima. Nada más.
+
+En la defensa se escanean fotos impresas de las fachadas (§1). Se dice así: *"en el lugar
+reconoce la fachada real; acá uso una foto impresa de la misma fachada"*, y se acompaña con
+el video grabado allá (D6). Sin ese video, el reconocimiento de la fachada real va en
+"lo que falta".
 
 🟢 **Lo que cambia para el trabajo**: hay meses, no semanas. Eso permite hacer las cosas
 bajo la DoD desde la primera unidad (tests incluidos) en vez de correr a mostrar algo.
@@ -136,7 +166,7 @@ Una funcionalidad está terminada **solo** cuando:
 La más cercana es la **capa de datos** (`MonumentDataSO` + catálogo): cumple (a), (b) (29
 tests EditMode, incluidos los que leen los `.asset` reales) y (d). Le falta (c): **nada en
 la escena la usa todavía**, así que no hay nada que ver en el teléfono. Se cierra cuando el
-tracking la consuma (§7.2, C1–C5) y Daniel lo vea en el A52s (D3). El tracking en sí cumple
+tracking la consuma (§7.2: C1–C3 y C6) y Daniel lo vea en el A52s con una foto impresa (D7). El tracking en sí cumple
 (c) desde S1, pero no tiene tests.
 
 ---
@@ -191,13 +221,17 @@ atención a nadie.**
 
 | # | Tarea | Por qué no lo puede hacer Claude | Desbloquea |
 |---|---|---|---|
-| D1 | 🔴 **Decidir el alcance del MVP: marcador impreso o fachada real.** `temas-presentacion-final.md` §5 ya plantea la escalera *imagen impresa (hoy) → superficie → iglesia real*; recomendación: marcador impreso como alcance del MVP y fachada como trabajo futuro | Es una decisión de alcance del proyecto de grado | Tamaño y diseño de los marcadores (D2) |
-| D2 | 🔴 **Las 5 imágenes de marcador**: diseñarlas o elegirlas, validarlas con `arcoreimg` (≥ 85 en Linux/WSL) e imprimirlas. Dejar los PNG en `Assets/_SenderoAR/Art/Tracking/` y anotar el tamaño impreso en metros | Hace falta criterio visual, impresora y cámara | C4: cargarlos en la librería y silenciar los 5 avisos |
-| D3 | 🔴 **Probar en el Samsung A52s** cada cosa nueva que llegue a la escena | Condición (c) de la DoD: dispositivo físico | Cerrar la primera unidad bajo la DoD |
-| D4 | 🔴 **Fuente para cada dato histórico ⚠️**, empezando por la Pila "c. 1652" (`docs/01_Monuments_Database.md`) | Requiere bibliografía, Plan Misiones o el lugar; la regla 4 prohíbe escribir datos sin fuente | Audio, chatbot y textos de la tesis |
-| D5 | 🟡 Limpiar Git con los 4 comandos de §2 | El modo automático bloquea borrar ramas y stashes | Nada; es orden |
-| D6 | 🟡 Cargar `UNITY_LICENSE`, `UNITY_EMAIL` y `UNITY_PASSWORD` en los secrets de GitHub | Son credenciales personales | C6: tests y build en CI |
-| D7 | 🟡 Averiguar la fecha de la predefensa | Es información de la universidad | Planificar hacia atrás |
+| D1 | ✅ **Alcance del MVP decidido el 16/10/2026**: fachada real en el lugar, fotos impresas en la defensa (§1) | — | Todo lo de abajo |
+| D2 | 🔴 **Decidir qué imagen representa a la Pila Bautismal** (es un objeto curvo dentro del templo, no una fachada) **y a la Torre** (no es plana). Opciones para la Pila: (a) foto frontal de su cara tallada, con riesgo de tracking por la curvatura; (b) otro plano fijo cercano, como una placa; (c) reemplazar `mon_05`. Para la Torre: foto del primer cuerpo, que es el tramo más plano | Es una decisión de alcance y de contenido | D3, C4 |
+| D3 | 🔴 **Las 5 fotos de referencia**: frontales, sin perspectiva fuerte, luz pareja, alta resolución. Lo ideal es tomarlas en el lugar (D6); mientras tanto sirven fotos web con licencia, **anotando autor y licencia**. Validar con `arcoreimg` (≥ 85 en Linux/WSL). Dejar los PNG en `Assets/_SenderoAR/Art/Tracking/` | Hace falta cámara o criterio para elegir y licencias | C4 |
+| D4 | 🔴 **El ancho real de cada fachada en metros**, medido o con fuente (autor y fecha). Es el `Specify Size` de la librería de campo, y por la regla 4 no se puede estimar | Medición en el lugar o bibliografía | C4 |
+| D5 | 🔴 **Imprimir las 5 fotos para la demo** en papel **mate** (el brillo rompe el tracking), sin bordes recortados, y anotar el ancho impreso en metros | Impresora | C4 (librería de demo) |
+| D6 | 🔴 **Viaje a San José de Chiquitos**: validar sobre las fachadas reales (condición (c) de la DoD), **grabar un video de cada reconocimiento** como evidencia para la defensa y tomar fotos de referencia propias, en más de un horario si la luz cambia mucho | Hay que estar ahí | DoD de "reconoce la fachada"; C5 |
+| D7 | 🔴 **Probar en el Samsung A52s** cada cosa nueva, con las fotos impresas | Condición (c) de la DoD | Cerrar unidades bajo la DoD |
+| D8 | 🔴 **Fuente para cada dato histórico ⚠️**, empezando por la Pila "c. 1652" (`docs/01_Monuments_Database.md`) | Bibliografía, Plan Misiones o el lugar | Audio, chatbot y textos de la tesis |
+| D9 | 🟡 Limpiar Git con los 4 comandos de §2 | El modo automático bloquea borrar ramas y stashes | Nada; es orden |
+| D10 | 🟡 Cargar `UNITY_LICENSE`, `UNITY_EMAIL` y `UNITY_PASSWORD` en los secrets de GitHub | Son credenciales personales | C8 |
+| D11 | 🟡 Averiguar la fecha de la predefensa y la del viaje (D6) | Información de la universidad y logística propia | Planificar hacia atrás |
 
 ### 7.2. Lo que hace Claude, en orden
 
@@ -206,10 +240,12 @@ atención a nadie.**
 | C1 | Agregar `DisplayName` a `MonumentDataSO` y completarlo en los 5 `.asset` (lo exige `MonumentSnapshot`; ver `docs/04` §6) + test | Nada |
 | C2 | Implementar `IMonumentRepository` sobre `MonumentCatalogSO` + tests | C1 |
 | C3 | Completar `AppContext` como Service Locator (`Register`/`Resolve`/`TryResolve`, `docs/04` §3) + tests, y registrar el repositorio en `AppBootstrapper` | C2 |
-| C4 | Cargar los 5 marcadores en `SenderoTrackingLibrary` con su `Specify Size` → validador sin avisos | D2 |
-| C5 | Reemplazar el cubo de debug por el **nombre del monumento** (TextMeshPro 3D) resuelto vía repositorio a partir de la imagen trackeada → primera unidad candidata a DoD | C3 (y C4 para más de un monumento) · cierra con D3 |
-| C6 | Workflow de CI que corra los tests EditMode con GameCI | D6 |
-| C7 | Contenido real de 1 monumento, narración trilingüe, UI mínima, chatbot | D1, D4 |
+| C4 | **Dos librerías de tracking con las mismas texturas**: campo (ancho real, D4) y demo (ancho impreso, D5), elegidas al arrancar. Extender el validador para que compruebe que las dos apuntan a las mismas imágenes versionadas. El mecanismo se puede armar ya con el placeholder; las fotos reales entran cuando lleguen | Mecanismo: nada · Fotos: D2–D5 |
+| C5 | Si D6 trae más de una foto por fachada (por horario), permitir **varias imágenes por monumento** (`AnchorImageName` pasa a ser un prefijo o una lista) + tests | D6 |
+| C6 | Reemplazar el cubo de debug por el **nombre del monumento** (TextMeshPro 3D) resuelto vía repositorio, **con escala proporcional a `ARTrackedImage.size`**, para que se lea igual sobre una foto de 30 cm que sobre una fachada de varios metros → primera unidad candidata a DoD | C3 · cierra con D7 (impresa) y D6 (fachada) |
+| C7 | Revisar lo que quedó del enfoque diorama en el código: el valor de respaldo de 0.60 m en `MonumentDataSO.OnValidate` y el significado de `IsPhysicalInDefense` (venían de las bases MDF y las miniaturas) + tests | Nada |
+| C8 | Workflow de CI que corra los tests EditMode con GameCI | D10 |
+| C9 | Contenido real de 1 monumento, narración trilingüe, UI mínima, chatbot | D8 |
 
 ---
 

@@ -37,19 +37,20 @@ App móvil (Android/iOS) con dos módulos:
 
 El texto orbital figura en el perfil aprobado: **no es opcional**.
 
-### 2.1. Fachada real vs marcador impreso — 🔴 decisión abierta
+### 2.1. Fachada real vs marcador impreso — ✅ decidido el 16/10/2026
 
-En mayo se congeló el **enfoque diorama**: una base MDF de 60×60 cm con un vinilo mate que
-lleva el marcador 2D, y encima una miniatura de resina de ~15 cm. El tracking real ocurre
-sobre el vinilo; la miniatura es escenografía. Detalle en
+**Alcance del MVP (decisión de Daniel):** en el lugar, la app reconoce **la fachada real** de
+cada monumento; en la defensa en vivo se escanean **fotos impresas** de esas mismas fachadas.
+La imagen de referencia es la misma en los dos casos; cambia el tamaño físico declarado.
+Consecuencias y tareas: `CLAUDE.md` §1 y §7. Diseño técnico:
 [`03_AR_Tracking_Specs.md`](03_AR_Tracking_Specs.md) §2.
 
-`CLAUDE.md` §7 paso 1 **reabre esa decisión** el 04/09/2026 (memoria
-`sendero-ar-fachada-vs-marcador`). Mientras no se cierre, todo lo que dependa del tamaño o
-del material del marcador es 📐.
+🗄️ **Queda fuera del MVP** el *enfoque diorama* que se había congelado en mayo: base MDF de
+60 × 60 cm con un vinilo mate que llevaba un marcador 2D diseñado, y encima una miniatura de
+resina de ~15 cm. Su detalle se conserva en `03_` §2.4 y §4–§7 y en `06_` §7 por si se retoma.
 
-Lo único ✅: el pipeline de tracking funciona en el A52s con **1 marcador impreso de 20 cm**
-(placeholder, imagen de la Misión de San Javier en hoja oficio).
+Lo único ✅ hasta hoy: el pipeline de tracking funciona en el A52s con **1 marcador impreso
+de 20 cm** (placeholder, imagen de la Misión de San Javier en hoja oficio).
 
 ---
 
@@ -183,7 +184,7 @@ lecciones de depuración están en [`09_Lecciones_Unity.md`](09_Lecciones_Unity.
 | # | Decisión | Estado |
 |---|---|---|
 | P1 | 5 monumentos en código; `mon_05` es la **Pila Bautismal**, no Santa Cruz la Vieja | ✅ (los 5 `.asset` existen) |
-| P2 | 3 miniaturas físicas en la defensa (Templo, Torre, Pila) — "Camino A" | 📐 (`IsPhysicalInDefense` ya marcado en los `.asset`) |
+| P2 | 🗄️ 3 miniaturas físicas en la defensa (Templo, Torre, Pila) — "Camino A". Retirada el 16/10/2026: la defensa usa fotos impresas de las fachadas | 🗄️ (`IsPhysicalInDefense` sigue marcado en los `.asset`; revisarlo es la tarea C7 de `CLAUDE.md`) |
 | P3 | 3 idiomas: ES + EN + PT | 🟡 (solo hay descripciones ES) |
 | P4 | Texto orbital obligatorio, con `TextMeshPro` 3D (no UGUI en World Space) | 📐 |
 | P5 | Animación por monumento: rotación lenta + animación contextual + texto orbital | 📐 |
