@@ -146,6 +146,8 @@ SenderoAR/
 ├── Tools/
 │   └── validate_project.py           # Validador que corre en CI
 │
+├── docs/                             # Documentación técnica (ver docs/README.md)
+│
 ├── Assets/
 │   └── _SenderoAR/                   # Todo el código del proyecto
 │       ├── AR/Libraries/            # XRReferenceImageLibrary (versionada)
@@ -230,12 +232,14 @@ cd SenderoAR
 
 ## 📚 Documentación
 
-> ⚠️ **Los documentos técnicos (contexto, base de monumentos, arquitectura de IA,
-> specs de AR, patrones MVVM, pipelines TTS/3D/CI) viven fuera de este
-> repositorio.** No hay carpeta `docs/` versionada. Cuando el código cita
-> `03_AR_Tracking_Specs.md` §10 se refiere a esos documentos externos.
+La documentación técnica vive en [`docs/`](docs/README.md): contexto y decisiones,
+base de monumentos, arquitectura del chatbot, specs de image tracking, patrones MVVM,
+pipelines de audio, 3D y CI, modo demo y lecciones de depuración. Cada sección indica si
+describe algo **que ya está en el repo** o **un diseño todavía sin implementar**.
+Las referencias del código (`03_AR_Tracking_Specs.md` §10, `02_AI_Architecture.md` §6)
+apuntan a esos archivos.
 
-Lo que sí es verificable acá sin abrir Unity:
+Lo que es verificable sin abrir Unity:
 
 ```bash
 python Tools/validate_project.py

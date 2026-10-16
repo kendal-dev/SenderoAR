@@ -22,6 +22,21 @@
 | **Hogar del alcance** | `31_CARRERA/02_PROYECTO/perfil/indice-perfil-proyecto.md` |
 | **Hogar del calendario** | `31_CARRERA/01_UNIVERSIDAD/registro-clases-taller-2.md` §1.5 |
 | **Hogar de los KPIs** | `31_CARRERA/07_REGISTRO/kpis-carrera.md` — C2 |
+| **Hogar del diseño técnico** | [`docs/`](docs/README.md) en este repo — importado y contrastado con el código el 16/10/2026 |
+
+### Antes de escribir código, leer en `docs/`
+
+| Al tocar… | Leer |
+|---|---|
+| Cualquier cosa rara al depurar | `docs/09_Lecciones_Unity.md` — probablemente ya pasó |
+| `Core/AR/`, la librería de tracking, marcadores | `docs/03_AR_Tracking_Specs.md` |
+| `.asmdef`, ViewModels, `AppContext`, un contrato nuevo | `docs/04_MVVM_Patterns.md` |
+| `MonumentDataSO`, los `.asset`, textos históricos | `docs/01_Monuments_Database.md` — 🔴 datos históricos **sin fuente** |
+| Chatbot / audio / 3D / CI / defensa | `docs/02_` · `05_` · `06_` · `07_` · `08_` |
+
+Las marcas ✅ / 📐 / ⚠️ / 🔁 de esos documentos dicen si algo **existe**, es **diseño**,
+está **sin fuente** o fue **corregido**. Si el código contradice un documento, gana el
+código y el documento se corrige en el mismo commit.
 
 ---
 
