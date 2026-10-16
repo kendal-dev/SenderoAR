@@ -15,9 +15,9 @@
 | Composition Root (`AppBootstrapper`) | ✅ Valida AR, fija 30 FPS y portrait, inicializa `AppContext`, carga `_Main` |
 | `AppContext` | 🟡 **Solo una compuerta**: `IsReady`, `Initialize()`, `Reset()`, `EnsureReady()`. **No registra ni resuelve servicios** |
 | `BaseViewModel`, `ReactiveProperty<T>`, `RelayCommand`, `CompositeDisposable` | 📐 No existen |
-| ViewModels / Views | 📐 Carpetas vacías |
-| Assembly definitions (`.asmdef`) | 📐 No existen: todo compila en `Assembly-CSharp` |
-| Tests | 📐 No hay carpeta `Tests/` |
+| ViewModels / Views | 📐 Carpetas vacías (solo `.gitkeep`) |
+| Assembly definitions (`.asmdef`) | ✅ `SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode` (16/10/2026). Ver §2 |
+| Tests | ✅ 29 tests EditMode en `Tests/EditMode/`, verdes en batchmode el 16/10/2026. Ver §2.2 |
 
 ---
 
@@ -38,7 +38,49 @@
 
 ---
 
-## 2. Assembly definitions — 📐 diseño
+## 2. Assembly definitions
+
+### 2.1. Lo que existe — ✅ en el repo (16/10/2026)
+
+Se eligió la **opción (a)** de la nota de §2.3 para no mover ningún archivo: un `.asmdef`
+por carpeta existente, con referencias a UnityEngine. Los `.cs.meta` no se tocaron, así que
+las escenas siguen encontrando sus scripts por GUID.
+
+| Assembly | Carpeta | Referencias | Notas |
+|---|---|---|---|
+| `SenderoAR.Models` | `Models/` | (ninguna) | Con UnityEngine: `MonumentDataSO` y `MonumentCatalogSO` son `ScriptableObject` |
+| `SenderoAR.Core` | `Core/` | `SenderoAR.Models`, `Unity.XR.ARFoundation`, `Unity.XR.ARSubsystems`, `Unity.XR.CoreUtils` | Contratos, AR, Composition Root, diagnósticos |
+| `SenderoAR.Tests.EditMode` | `Tests/EditMode/` | `SenderoAR.Models`, `SenderoAR.Core`, Test Runner, `nunit.framework.dll` | Solo Editor, `defineConstraints: UNITY_INCLUDE_TESTS`, `autoReferenced: false` |
+
+`Assets/Editor/` (los validadores de menú) sigue en `Assembly-CSharp-Editor`, que ve a
+`SenderoAR.Models` y `SenderoAR.Core` porque ambos son `autoReferenced`.
+
+**Al agregar código nuevo**: va dentro de una de esas carpetas (o de una nueva con su
+propio `.asmdef`). Lo que quede fuera compila en `Assembly-CSharp`, y **ningún `.asmdef`
+puede referenciar `Assembly-CSharp`**: los tests no lo verían.
+
+### 2.2. Tests — ✅ en el repo
+
+| Archivo | Qué cubre |
+|---|---|
+| `MonumentCatalogSOTests` | `TryGetById`: acierto, ID desconocido, `null`/vacío, catálogo vacío, slots `null`, mayúsculas |
+| `MonumentDataSOValidationTests` | `OnValidate`: ID vacío toma el nombre del asset, umbral en [0..1], `PhysicalSize` ≤ 0 → 0.60 m, 0.20 m se respeta |
+| `MonumentCatalogAssetTests` | Los datos **reales**: 5 monumentos en orden, ID = nombre del asset y único, datos de tracking en rango, descripción ES presente |
+| `ModelContractTests` | Valores serializados estables de `LanguageCode` y `MonumentTrackingPhase`; validación del constructor de `MonumentSnapshot` |
+
+Correrlos sin abrir el editor (~3 min; falla si el editor tiene el proyecto abierto):
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/2022.3.62f3/Editor/Unity.exe" -batchmode -nographics \
+  -projectPath "C:\Proyectos\SenderoAR" -runTests -testPlatform EditMode \
+  -testResults resultados.xml -logFile tests.log
+```
+
+Código de salida 0 = todo verde. En el editor: *Window → General → Test Runner → EditMode*.
+El CI de GitHub **no** los corre: necesita una licencia de Unity en los secrets
+([`07_CICD_Pipeline.md`](07_CICD_Pipeline.md) §2).
+
+### 2.3. Diseño a futuro — 📐
 
 ```
 Assets/_SenderoAR/
@@ -52,14 +94,15 @@ Assets/_SenderoAR/
 └── Tests/             App.Tests.asmdef                NUnit, solo Editor
 ```
 
-> ⚠️ **Choque con el código actual.** `App.Domain` se diseñó con `noEngineReferences: true`,
-> pero hoy `Models/` contiene `MonumentDataSO` y `MonumentCatalogSO` (heredan de
-> `ScriptableObject`) y `MonumentDataSO` usa `Vector2`, `Vector3` y `GameObject`. Antes de
-> crear los `.asmdef` hay que elegir:
-> **(a)** `App.Domain` con referencias a UnityEngine, o
-> **(b)** separar `Models/Data/` (POCOs puros, sin engine) de `Models/Assets/` (los
-> `ScriptableObject`s).
-> La opción (b) es la que permite probar el dominio sin Unity.
+> 🔁 **Choque con el código, resuelto con la opción (a).** `App.Domain` se diseñó con
+> `noEngineReferences: true`, pero `Models/` contiene `ScriptableObject`s que usan
+> `Vector2`, `Vector3` y `GameObject`. Las opciones eran:
+> **(a)** assembly de modelos con referencias a UnityEngine — **elegida el 16/10/2026**
+> (`SenderoAR.Models`), sin mover archivos; o
+> **(b)** separar `Models/Data/` (POCOs puros) de `Models/Assets/` (`ScriptableObject`s).
+> (b) sigue disponible si algún día hace falta probar el dominio fuera de Unity. Los nombres
+> `App.*` de abajo son el plan de mayo; los assemblies nuevos siguen el prefijo
+> `SenderoAR.*`, alineado con los namespaces.
 
 Configuraciones previstas:
 
@@ -99,10 +142,9 @@ Configuraciones previstas:
 }
 ```
 
-Al crear el primer `.asmdef`, todo lo que quede fuera sigue en `Assembly-CSharp`, que **no
-puede ser referenciado** por un `.asmdef`. Conviene crearlos de abajo hacia arriba
-(Domain → MVVM → …) en un mismo commit por capa y verificar que compila con el comando de
-`CLAUDE.md` §8.
+Cada capa nueva (MVVM, Services, ViewModels, Views, DemoMode) entra con su propio
+`.asmdef` en el mismo commit que su primer archivo, y se verifica corriendo los tests de
+§2.2.
 
 ---
 
@@ -254,8 +296,14 @@ por frame.
 | `ILocalizationService` | `LanguageCode CurrentLanguage` · `void SetLanguage(LanguageCode)` · `event Action<LanguageCode> LanguageChanged` |
 | `IMonumentRepository` | `Task<MonumentSnapshot> GetByIdAsync(string, CancellationToken)` · `Task<IReadOnlyList<MonumentSnapshot>> GetAllAsync(CancellationToken)` · `bool IsReady` |
 
-`IMonumentRepository` es el primero a implementar (`CLAUDE.md` §7 paso 4): una clase que
+`IMonumentRepository` es el primero a implementar (`CLAUDE.md` §7): una clase que
 lee `MonumentCatalogSO` y devuelve `MonumentSnapshot`s.
+
+> ⚠️ **Falta un dato para implementarlo.** El constructor de `MonumentSnapshot` exige un
+> `displayName` no vacío, y `MonumentDataSO` **no tiene campo de nombre**. Antes del
+> repositorio hay que agregar `DisplayName` (o un `LocalizedDescription` de nombres) al
+> `ScriptableObject` y completarlo en los 5 `.asset`. Los nombres están en
+> [`01_Monuments_Database.md`](01_Monuments_Database.md).
 
 ---
 

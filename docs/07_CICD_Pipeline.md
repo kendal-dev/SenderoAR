@@ -48,8 +48,8 @@ rotarlo: borrarlo del historial no alcanza.
 
 | Pieza | Diseño | Depende de |
 |---|---|---|
-| Lint | `dotnet format whitespace --verify-no-changes`, `continue-on-error` | Nada; se podría agregar ya |
-| Tests | `game-ci/unity-test-runner@v4`, `testMode: all` | Que existan tests y `App.Tests.asmdef` ([`04_`](04_MVVM_Patterns.md) §2) + secrets de Unity |
+| Lint | `dotnet format whitespace --verify-no-changes`, `continue-on-error` | 🔁 No funciona tal cual: `.sln` y `.csproj` están en `.gitignore` (los genera Unity), así que en el CI no existen. Haría falta generarlos con Unity o usar otro linter |
+| Tests en CI | `game-ci/unity-test-runner@v4`, `testMode: EditMode` | 🟡 Los tests ya existen (`SenderoAR.Tests.EditMode`, 29 casos, [`04_`](04_MVVM_Patterns.md) §2.2). Falta solo cargar los secrets de Unity |
 | Build en cada push a `main` | AAB (`androidAppBundle: true`) | Secrets de Unity; costo en minutos |
 | Distribución | Firebase App Distribution (`firebase appdistribution:distribute`) | Proyecto Firebase |
 | iOS | Runner `macos-latest`, solo manual o con `[ios]` en el mensaje | Cuenta de Apple Developer |

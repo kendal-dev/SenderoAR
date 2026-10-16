@@ -83,6 +83,9 @@ adb logcat -s Unity ARCore ARFoundation
 
 # Integridad del repo, sin Unity
 python Tools/validate_project.py
+
+# Tests EditMode sin abrir el editor (salida 0 = verde; ver 04_MVVM_Patterns.md §2.2)
+& "C:\Program Files\Unity\Hub\Editor\2022.3.62f3\Editor\Unity.exe" -batchmode -nographics -projectPath "C:\Proyectos\SenderoAR" -runTests -testPlatform EditMode -testResults resultados.xml -logFile tests.log
 ```
 
 Compilar sin abrir el editor: comando en `CLAUDE.md` §8.
