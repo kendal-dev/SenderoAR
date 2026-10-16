@@ -39,9 +39,13 @@
 
 ## 🎯 Visión del Proyecto
 
-**Sendero AR** democratiza el acceso al patrimonio cultural boliviano mediante experiencias inmersivas de Realidad Aumentada. La aplicación reconoce las fachadas de cinco monumentos históricos en San José de Chiquitos, superpone modelos 3D reconstruidos digitalmente y narra su historia en tres idiomas (Español, Inglés, Portugués) — todo funcionando offline.
+**Sendero AR** busca acercar el patrimonio cultural boliviano mediante Realidad Aumentada. El objetivo: que la app reconozca cinco monumentos del Conjunto Misional de San José de Chiquitos, superponga un modelo 3D de cada uno y narre su historia en tres idiomas (Español, Inglés, Portugués), sin necesidad de internet.
 
-Para profundizar en la experiencia, un chatbot histórico impulsado por **Gemini 3.1 Flash-Lite** responde preguntas académicas sobre las misiones jesuíticas, la arquitectura Barroco Mestizo y el legado de figuras como Martin Schmid y Hans Roth.
+> **Lo que corre hoy:** el reconocimiento de **un marcador impreso de prueba** (20 cm) en un
+> Samsung A52s, con un cubo encima. Si el reconocimiento final será sobre la fachada real o
+> sobre un marcador impreso es una decisión todavía abierta.
+
+Como complemento online está planificado un chatbot histórico sobre **Gemini** (vía Firebase AI Logic, con el modelo configurable por Remote Config) que responda preguntas sobre las misiones jesuíticas. Diseño en [`docs/02_AI_Architecture.md`](docs/02_AI_Architecture.md).
 
 ---
 
@@ -77,7 +81,7 @@ Para profundizar en la experiencia, un chatbot histórico impulsado por **Gemini
 |---|---|---|
 | **Firebase Unity SDK** | 13.10.0+ | Backend serverless |
 | **Firebase AI Logic** | API Mayo 2026 | Proxy seguro a Gemini |
-| **Vertex AI Gemini** | 3.1 Flash-Lite | Modelo de lenguaje |
+| **Vertex AI Gemini** | `gemini-3.5-flash` previsto, vía Remote Config | Modelo de lenguaje |
 | **Firebase App Check** | Play Integrity / DeviceCheck | Atestación criptográfica |
 | **Firebase Remote Config** | — | Feature flags + A/B testing |
 
@@ -104,7 +108,7 @@ Para profundizar en la experiencia, un chatbot histórico impulsado por **Gemini
 
 El proyecto implementa el patrón **Model-View-ViewModel (MVVM) puro en C#**, sin frameworks externos como UniRx o Zenject. Esto garantiza:
 
-- 🟡 **Testabilidad** — los Models ya son POCOs sin referencias a UnityEngine, pero correrlos con NUnit fuera de Unity exige separar los assembly definitions (`.asmdef`), que **todavía no existen**: hoy todo compila en `Assembly-CSharp`. Es trabajo de Sprint 3
+- 🟡 **Testabilidad** — el código propio compila en tres assembly definitions (`SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode`) y hay **29 tests EditMode** sobre la capa de datos, en verde. Corren dentro de Unity (los modelos usan `ScriptableObject`), todavía no en el CI. Ver [`docs/04_MVVM_Patterns.md`](docs/04_MVVM_Patterns.md) §2
 - ✅ **Zero allocation por frame** — objetivo de diseño: el color de estado de tracking se aplica con `MaterialPropertyBlock` y las etiquetas del HUD se cachean, precisamente para no generar basura en el bucle de render
 - ✅ **Desacoplamiento total** — La capa de presentación ignora la existencia de la UI
 - ✅ **Inyección de dependencias híbrida** — Service Locator + Constructor Injection
@@ -159,8 +163,12 @@ SenderoAR/
 │       │   └── Materials/            # DebugCubeMat (URP)
 │       ├── Models/                   # POCOs + MonumentDataSO + 5 assets
 │       ├── Scenes/                   # _App_Boot, _Main
-│       ├── ViewModels/               # (vacío — Sprint 3)
-│       └── Views/                    # (vacío — Sprint 5)
+│       ├── Tests/EditMode/           # Tests NUnit (Unity Test Framework)
+│       ├── ViewModels/               # (vacío — solo .gitkeep)
+│       └── Views/                    # (vacío — solo .gitkeep)
+│
+│       Assembly definitions: SenderoAR.Models (Models/), SenderoAR.Core (Core/),
+│       SenderoAR.Tests.EditMode (Tests/EditMode/). Ver docs/04_MVVM_Patterns.md §2.
 │
 │   └── _SenderoAR/Art/
 │       ├── Tracking/                 # ✅ SÍ versionado: la librería de imágenes
@@ -183,12 +191,12 @@ SenderoAR/
 
 Proyecto estructurado en **12 sprints de 2 semanas** (24 semanas totales), siguiendo metodología **Scrum** con Trunk-Based Development.
 
-| Sprint | Periodo planificado | Objetivo | Estado real al 04/09/2026 |
+| Sprint | Periodo planificado | Objetivo | Estado real al 16/10/2026 |
 |---|---|---|---|
 | **S0** | 18 – 22 May 2026 | Cimentación: setup repo + AR Foundation 5.2 | ✅ Cerrado |
 | **S1** | 25 May – 5 Jun | Image Tracking PoC de 1 monumento | ✅ Cerrado — validado en dispositivo físico |
 | **S2** | 8 – 19 Jun | Modelo de datos + ScriptableObjects | 🟡 **En curso** — capa de datos lista (5 `MonumentDataSO` + catálogo); faltan los 5 marcadores reales en la librería |
-| **S3** | 22 Jun – 3 Jul | Arquitectura MVVM base | ⬜ Contratos escritos, sin implementación ni `.asmdef` |
+| **S3** | 22 Jun – 3 Jul | Arquitectura MVVM base | 🟡 Contratos escritos y `.asmdef` de Models/Core/Tests; sin implementaciones ni infraestructura MVVM |
 | **S4** | 6 – 17 Jul | Sistema de localización trilingüe | ⬜ Descripciones EN/PT vacías en los 5 assets |
 | **S5** | 20 – 31 Jul | UI Core (Views) | ⬜ |
 | **S6** | 3 – 14 Ago | Integración de modelos 3D | ⬜ |
@@ -196,13 +204,14 @@ Proyecto estructurado en **12 sprints de 2 semanas** (24 semanas totales), sigui
 | **S8** | 31 Ago – 11 Sep | Firebase Setup + App Check | ⬜ Sin dependencias Firebase en `manifest.json` |
 | **S9** | 14 – 25 Sep | Chatbot Gemini | ⬜ |
 | **S10** | 28 Sep – 9 Oct | Pulido UX + performance | ⬜ |
-| **S11** | 12 – 23 Oct | Testing + QA | ⬜ Sin tests en el repo |
+| **S11** | 12 – 23 Oct | Testing + QA | 🟡 29 tests EditMode de la capa de datos; nada de PlayMode ni de integración AR |
 | **S12** | 26 Oct – 6 Nov | Validación con usuarios reales | ⬜ |
-| **Buffer** | 9 – 13 Nov | Defensa privada UPV | ⬜ |
 
 > 📌 **El calendario de arriba es el planificado en Sprint 0 y está vencido.**
 > El proyecto está en Sprint 2, no en Sprint 8. Las fechas de S3 en adelante
 > necesitan replanificación antes de usarse para prometer nada.
+> La defensa de grado quedó para **mitad de 2027**; las fechas vigentes están en
+> [`CLAUDE.md`](CLAUDE.md) §3.
 
 ## 🚀 Empezando
 
@@ -227,6 +236,16 @@ cd SenderoAR
 2. **Open** → seleccioná la carpeta `SenderoAR`
 3. Cuando pregunte la versión, elegí **2022.3.62f3**
 4. Esperá la primera importación (puede tomar 15-30 min la primera vez)
+
+### Correr los tests
+
+En el editor: **Window → General → Test Runner → EditMode → Run All**.
+
+Sin abrir el editor (con el proyecto cerrado; código de salida 0 = todo verde):
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/2022.3.62f3/Editor/Unity.exe" -batchmode -nographics -projectPath "C:\Proyectos\SenderoAR" -runTests -testPlatform EditMode -testResults resultados.xml -logFile tests.log
+```
 
 ---
 

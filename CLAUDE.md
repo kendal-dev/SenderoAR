@@ -8,7 +8,7 @@
 > ya viva en el vault `C:\Users\kevin\Segundo_Cerebro`. Cuando hace falta un dato de
 > alcance, calendario o normativa, **se referencia su hogar**, no se copia.
 >
-> Última medición contra el disco: **04/09/2026**.
+> Última medición contra el disco: **16/10/2026** (la anterior: 04/09/2026).
 
 ---
 
@@ -20,7 +20,7 @@
 | **Entrega** | Objetivo específico #4 del perfil aprobado: *construir el MVP* |
 | **NO es** | El documento de tesis. El documento vive en el vault, `31_CARRERA/02_PROYECTO/` |
 | **Hogar del alcance** | `31_CARRERA/02_PROYECTO/perfil/indice-perfil-proyecto.md` |
-| **Hogar del calendario** | `31_CARRERA/01_UNIVERSIDAD/registro-clases-taller-2.md` §1.5 |
+| **Hogar del calendario** | `31_CARRERA/01_UNIVERSIDAD/bitacora-taller-2.md` (defensa, mitad de 2027) · `32_SOCIAL/03_ORATORIA/temas-presentacion-final.md` (demos). 🗄️ Antes: `registro-clases-taller-2.md` §1.5, que era de Taller II |
 | **Hogar de los KPIs** | `31_CARRERA/07_REGISTRO/kpis-carrera.md` — C2 |
 | **Hogar del diseño técnico** | [`docs/`](docs/README.md) en este repo — importado y contrastado con el código el 16/10/2026 |
 
@@ -40,7 +40,7 @@ código y el documento se corrige en el mismo commit.
 
 ---
 
-## 2. Estado real medido el 04/09/2026
+## 2. Estado real medido el 16/10/2026
 
 ### Lo que corre
 
@@ -50,15 +50,41 @@ código y el documento se corrige en el mismo commit.
 | Escenas `_App_Boot` → `_Main` | 🟢 Encadenadas, en Build Settings |
 | Capa de datos | 🟢 `MonumentDataSO` + catálogo + **5 assets** con descripción ES |
 | Contratos de servicio | 🟢 5 interfaces escritas y documentadas |
-| Implementaciones de esos contratos | 🔴 **Cero.** No hay una sola clase que implemente ninguna |
-| ViewModels / Views | 🔴 Carpetas vacías |
-| Audio · 3D · chatbot · UI · tests | 🔴 Nada |
-| CI | 🟢 `Tools/validate_project.py` (sin licencia Unity) + build GameCI manual |
+| Assembly definitions | 🟢 `SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode` (opción (a) de `docs/04` §2.3: sin mover archivos ni GUIDs) |
+| Tests | 🟢 **29 tests EditMode en verde** (batchmode, 16/10) sobre la capa de datos: catálogo, `OnValidate`, datos reales de los 5 `.asset`, enums serializados, `MonumentSnapshot` |
+| Compilación | 🟢 Batchmode con 2022.3.62f3 el 16/10: **0 errores de C#** |
+| Documentación técnica | 🟢 `docs/` importada y contrastada con el código |
+| CI en `main` | 🟢 Validador determinístico mergeado (`b209fd6`, merge `643338d`): 0 errores también en un clone limpio. Estuvo en rojo desde `553144d` hasta ese merge. Los tests **no** corren en CI (falta licencia de Unity en los secrets) |
+| Implementaciones de los contratos | 🔴 **Cero.** No hay una sola clase que implemente ninguna |
+| ViewModels / Views | 🔴 Carpetas vacías (solo `.gitkeep`) |
+| Audio · 3D · chatbot · UI | 🔴 Nada |
 
 ### La distancia real
 
-**Sprint 2 de 12.** El roadmap del README planificaba Sprint 8 para esta fecha.
-Entre el 27/05 y el 04/09 no hubo un solo commit con cambios.
+**Sprint 2 de 12.** Entre el 27/05 y el 04/09 no hubo un solo commit con cambios;
+entre el 04/09 y el 16/10, solo el de documentación. El 16/10 entraron los `.asmdef` y los
+primeros tests: es el primer avance de código desde la auditoría.
+
+### Ruido en Git — pendiente de Daniel
+
+Borrar ramas y stashes lo bloquea el modo automático de Claude (es irreversible). Se
+verificó el 16/10 que **todo esto ya está contenido en `main`** y se puede borrar sin
+perder nada:
+
+| Qué | Por qué sobra |
+|---|---|
+| `feat/sprint-2-monument-scriptable-objects` (local y remota) | Mergeada en `e630d00` |
+| `ccr-f1a5b7d4-y0d83n` (remota) | Mergeada en `643338d` |
+| `backup/main-pre-auditoria-2026-09-04` (local) | Su punta está en la historia de `main` |
+| `stash@{0}` `849e15d` (ProjectSettings) | Idéntico a `HEAD` (`preloadedAssets: []`, que XR Management completa solo durante el build) |
+| `stash@{1}` `245819c` (borra `Assets/XR/Temp.meta`) | Ya aplicado en `b209fd6`; `Assets/XR/Temp` ahora está en `.gitignore` |
+
+```bash
+git branch -d feat/sprint-2-monument-scriptable-objects backup/main-pre-auditoria-2026-09-04
+git push origin --delete feat/sprint-2-monument-scriptable-objects ccr-f1a5b7d4-y0d83n
+git stash drop stash@{1}
+git stash drop stash@{0}
+```
 
 ### Los 5 avisos que el validador da hoy
 
@@ -68,16 +94,27 @@ Ese es el trabajo pendiente del Sprint 2, y es trabajo de cámara, no de código
 
 ---
 
-## 3. 🔴 Las tres fechas que mandan
+## 3. 🔴 Las fechas que mandan
 
-| Hito | Fecha | Qué exige | Fuente |
+🔁 **Cambio registrado en el vault el 22/09/2026**: Daniel dejó de ir a Taller de
+Sistemas II como oyente, y **la defensa de Sendero AR es a mitad de 2027**
+(hogar: `31_CARRERA/01_UNIVERSIDAD/bitacora-taller-2.md`, frontmatter y §8.1).
+Los hitos H1 (~15/09), H2 (~15/10) y H3 (09/11/2026) eran de esa materia y **ya no
+aplican** a este proyecto.
+
+| Fecha | Qué | Qué exige del repo | Fuente |
 |---|---|---|---|
-| **H1 · Avance de mes** | 🟡 ~15/09/2026 | Casos de uso + diagrama de clases + 1 monumento real corriendo | Clase 24/08 |
-| **H2 · Parcial 1 — defensa 1 a 1** | 🟡 ~15/10/2026 | Capítulo II + 3 monumentos + trilingüe | Clase 24/08 |
-| **H3 · Parcial 2** | 🟢 **09/11/2026** | *"Codificación avanzada o casi terminada"* · 30 docente + 70 defensa | Clase 24/08, fecha exacta |
+| ⬜ sin dato | **Predefensa** | Demo que corra en vivo | `32_SOCIAL/03_ORATORIA/temas-presentacion-final.md` §5 |
+| 🟡 24/10/2026 | AWS (pitch) | Opcional: demo de 3 min | ídem §1 |
+| 🟡 14–15/11/2026 | NASA Space Apps | Opcional: demo de 3 min | ídem §1 |
+| 🟢 mitad de 2027 | **Defensa de grado** | El MVP completo bajo la DoD | `bitacora-taller-2.md` |
 
-🔴 **Las fechas de H1 y H2 siguen siendo "mediados de".** Sin fecha exacta no son
-un dato (regla 8). Se cierran preguntando en clase.
+🔴 **La regla de cualquier demo** (de `temas-presentacion-final.md` §3): se muestra solo lo
+que corre ese día; lo que no corre se dice como "lo que falta". Hoy corre el reconocimiento
+del marcador impreso con un cubo encima. Nada más.
+
+🟢 **Lo que cambia para el trabajo**: hay meses, no semanas. Eso permite hacer las cosas
+bajo la DoD desde la primera unidad (tests incluidos) en vez de correr a mostrar algo.
 
 ---
 
@@ -93,8 +130,13 @@ Una funcionalidad está terminada **solo** cuando:
 (d) el código fue versionado y consolidado en GitHub
 ```
 
-🔴 **Hoy el proyecto tiene 0 unidades cerradas bajo esta definición** — falla (b) en
-todo y (d) en lo último. La condición (c), que es la cara, **ya está probada**.
+🔴 **Hoy el proyecto tiene 0 unidades cerradas bajo esta definición.**
+
+La más cercana es la **capa de datos** (`MonumentDataSO` + catálogo): cumple (a), (b) (29
+tests EditMode, incluidos los que leen los `.asset` reales) y (d). Le falta (c): **nada en
+la escena la usa todavía**, así que no hay nada que ver en el teléfono. Se cierra cuando el
+tracking la consuma (§7.2, C1–C5) y Daniel lo vea en el A52s (D3). El tracking en sí cumple
+(c) desde S1, pero no tiene tests.
 
 ---
 
@@ -138,18 +180,35 @@ atención a nadie.**
 
 ---
 
-## 7. Próximos pasos — en orden, sin saltar
+## 7. Próximos pasos
 
-> Detalle, horas y fechas: el plan de acción del 04/09/2026.
+> Revisado el 16/10/2026. Hecho ese día: CI en verde, `.asmdef`, 29 tests, docs alineadas.
+> El trabajo quedó partido en dos listas: lo que **solo Daniel puede hacer** (decisiones,
+> cámara, teléfono, fuentes, credenciales) y lo que **Claude hace sin él**.
 
-1. 🔴 **Decidir el alcance real de la demo** (fachada real vs marcador impreso) —
-   condiciona todo lo demás. Ver la memoria `sendero-ar-fachada-vs-marcador`.
-2. 🔴 **Cerrar la primera unidad funcional bajo la DoD**: test mínimo + commit sobre
-   image tracking. Son 2 acciones, no un sprint.
-3. 🔴 **5 fotos de marcador** → librería → los 5 avisos del validador en verde.
-4. 🟡 Implementar `IMonumentRepository` sobre el catálogo que ya existe.
-5. 🟡 Reemplazar el cubo por contenido real de 1 monumento (H1).
-6. 🟡 Narración trilingüe por TTS · UI mínima · chatbot.
+### 7.1. Lo que solo puede hacer Daniel
+
+| # | Tarea | Por qué no lo puede hacer Claude | Desbloquea |
+|---|---|---|---|
+| D1 | 🔴 **Decidir el alcance del MVP: marcador impreso o fachada real.** `temas-presentacion-final.md` §5 ya plantea la escalera *imagen impresa (hoy) → superficie → iglesia real*; recomendación: marcador impreso como alcance del MVP y fachada como trabajo futuro | Es una decisión de alcance del proyecto de grado | Tamaño y diseño de los marcadores (D2) |
+| D2 | 🔴 **Las 5 imágenes de marcador**: diseñarlas o elegirlas, validarlas con `arcoreimg` (≥ 85 en Linux/WSL) e imprimirlas. Dejar los PNG en `Assets/_SenderoAR/Art/Tracking/` y anotar el tamaño impreso en metros | Hace falta criterio visual, impresora y cámara | C4: cargarlos en la librería y silenciar los 5 avisos |
+| D3 | 🔴 **Probar en el Samsung A52s** cada cosa nueva que llegue a la escena | Condición (c) de la DoD: dispositivo físico | Cerrar la primera unidad bajo la DoD |
+| D4 | 🔴 **Fuente para cada dato histórico ⚠️**, empezando por la Pila "c. 1652" (`docs/01_Monuments_Database.md`) | Requiere bibliografía, Plan Misiones o el lugar; la regla 4 prohíbe escribir datos sin fuente | Audio, chatbot y textos de la tesis |
+| D5 | 🟡 Limpiar Git con los 4 comandos de §2 | El modo automático bloquea borrar ramas y stashes | Nada; es orden |
+| D6 | 🟡 Cargar `UNITY_LICENSE`, `UNITY_EMAIL` y `UNITY_PASSWORD` en los secrets de GitHub | Son credenciales personales | C6: tests y build en CI |
+| D7 | 🟡 Averiguar la fecha de la predefensa | Es información de la universidad | Planificar hacia atrás |
+
+### 7.2. Lo que hace Claude, en orden
+
+| # | Tarea | Depende de |
+|---|---|---|
+| C1 | Agregar `DisplayName` a `MonumentDataSO` y completarlo en los 5 `.asset` (lo exige `MonumentSnapshot`; ver `docs/04` §6) + test | Nada |
+| C2 | Implementar `IMonumentRepository` sobre `MonumentCatalogSO` + tests | C1 |
+| C3 | Completar `AppContext` como Service Locator (`Register`/`Resolve`/`TryResolve`, `docs/04` §3) + tests, y registrar el repositorio en `AppBootstrapper` | C2 |
+| C4 | Cargar los 5 marcadores en `SenderoTrackingLibrary` con su `Specify Size` → validador sin avisos | D2 |
+| C5 | Reemplazar el cubo de debug por el **nombre del monumento** (TextMeshPro 3D) resuelto vía repositorio a partir de la imagen trackeada → primera unidad candidata a DoD | C3 (y C4 para más de un monumento) · cierra con D3 |
+| C6 | Workflow de CI que corra los tests EditMode con GameCI | D6 |
+| C7 | Contenido real de 1 monumento, narración trilingüe, UI mínima, chatbot | D1, D4 |
 
 ---
 
@@ -157,14 +216,26 @@ atención a nadie.**
 
 ```bash
 python Tools/validate_project.py          # integridad del repo, sin Unity
-git push origin main                       # 6 commits de la auditoría del 04/09 sin subir
+gh run list --limit 5                      # estado del CI en GitHub
 ```
 
-Compilar sin abrir el editor (verifica que el C# no rompió nada):
+En esta máquina `python` no está en el PATH de Git Bash: usar `py -I Tools/validate_project.py`.
+
+Compilar sin abrir el editor (verifica que el C# no rompió nada; ~2–5 min, falla si el
+editor tiene el proyecto abierto):
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/2022.3.62f3/Editor/Unity.exe" -batchmode -quit -nographics -projectPath "C:\Proyectos\SenderoAR" -logFile /tmp/unity.log
 ```
+
+Correr los tests EditMode sin abrir el editor (~3 min; código de salida 0 = verde; sin
+`-quit`, porque `-runTests` cierra solo):
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/2022.3.62f3/Editor/Unity.exe" -batchmode -nographics -projectPath "C:\Proyectos\SenderoAR" -runTests -testPlatform EditMode -testResults /tmp/resultados.xml -logFile /tmp/tests.log
+```
+
+**Antes de cada commit con C#**: tests en verde. **Antes de cada push**: validador con 0 errores.
 
 ---
 

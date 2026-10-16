@@ -62,10 +62,10 @@ Lo único ✅: el pipeline de tracking funciona en el A52s con **1 marcador impr
 | Unity | **2022.3.62f3 LTS** | CI falla si `ProjectVersion.txt` cambia |
 | AR Foundation | **5.2.0** | 🔁 Se probó 6.0.7 el 19/05 y chocó con `com.unity.ugui 1.0.0`; 6.x apunta a Unity 6. Se volvió a 5.2 |
 | ARCore / ARKit XR Plugin | 5.2.0 | Android API 24+ · iOS 14+ · ARM64 · IL2CPP |
-| XR Management | 4.4.1 | |
-| Input System | 1.7.0 | |
+| XR Management | 4.5.0 | 🔁 los docs de mayo decían 4.4.1 |
+| Input System | 1.14.0 | 🔁 los docs de mayo decían 1.7.0 |
 | TextMeshPro | 3.0.9 | |
-| URP | 14.0.11 | Asset `URP-Performant` reutilizado de la plantilla AR Mobile |
+| URP | 14.0.12 | Asset `URP-Performant` reutilizado de la plantilla AR Mobile |
 | C# | .NET Standard 2.1 | Sin `dynamic` |
 
 **`URP-Performant`**: HDR off · Cast Shadows off · MSAA 2x · Render Scale 1.0 · sin luces
@@ -85,8 +85,9 @@ Addressables; pt-BR se descarga bajo demanda.
 
 ### 3.4. Patrón — 🟡 parcial
 
-MVVM puro sin frameworks. **Hoy existen** contratos, modelos y Composition Root;
-**no existen** ViewModels, Views, infraestructura reactiva ni `.asmdef`. Ver
+MVVM puro sin frameworks. **Hoy existen** contratos, modelos, Composition Root, tres `.asmdef`
+(`SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode`) y 29 tests EditMode;
+**no existen** ViewModels, Views ni infraestructura reactiva. Ver
 [`04_MVVM_Patterns.md`](04_MVVM_Patterns.md).
 
 ### 3.5. Presupuesto de rendimiento — objetivos de diseño
@@ -148,7 +149,7 @@ lecciones de depuración están en [`09_Lecciones_Unity.md`](09_Lecciones_Unity.
 | A8 | Lookups con patrón `TryGetById(string id, out T result)`: sin `null` de retorno ni `throw` | ✅ (`MonumentCatalogSO`) |
 | A9 | Todo `ScriptableObject` de datos declara `OnValidate()` defensivo dentro de `#if UNITY_EDITOR` | ✅ (`MonumentDataSO`) |
 | A10 | Todo `ScriptableObject` de datos tiene un validador de menú en `Assets/Editor/` | ✅ (`Sendero AR > Validate Monument Data`) |
-| A11 | `MonumentId` = nombre del `.asset`; `PhysicalSize` con piso 0.60 m; `TrackingConfidenceThreshold` en [0..1], default 0.4 | ✅ |
+| A11 | `MonumentId` = nombre del `.asset`; `PhysicalSize` ≤ 0 se corrige a 0.60 m (no es un mínimo); `TrackingConfidenceThreshold` en [0..1], default 0.4 | ✅ 🔁 (en mayo se lo describía como "piso de 0.60 m") |
 | A12 | Ningún segmento final de namespace puede llamarse `Debug`, `Object`, `Random` o `Time` | ✅ (`Core.Diagnostics`) |
 | A13 | Watchers previos a MVVM solo **observan**; mutar la jerarquía es trabajo de los servicios | ✅ (`TrackingLimitedTimeoutWatcher`) |
 | A14 | Modo demo con patrón Decorator + `#if DEMO_MODE`, sin tocar contratos | 📐 |
@@ -223,7 +224,7 @@ Se conserva porque fija el **orden de dependencias**, que sigue valiendo.
 | S11 | 19–30 Oct | Testing, QA, video de respaldo |
 | S12 | 2–6 Nov | Ensayos y contingencias |
 
-Las fechas académicas que mandan (H1, H2, H3 = 09/11/2026) están en `CLAUDE.md` §3.
+Las fechas que mandan están en `CLAUDE.md` §3. 🔁 Desde el 22/09/2026 la defensa de grado es a mitad de 2027; los hitos de Taller II (H1, H2, H3) ya no aplican.
 
 ---
 
@@ -235,6 +236,7 @@ Las fechas académicas que mandan (H1, H2, H3 = 09/11/2026) están en `CLAUDE.md
 | S1 | 25/05/2026 | `266aa64` | `SenderoTrackingLibrary` con 1 placeholder, escenas `_App_Boot` → `_Main`, `ImageTrackingController` URP-safe, `FPSDiagnosticsHUD`, `TrackingLimitedTimeoutWatcher`. Validado en A52s: cubo cian (tracking) / ámbar (limited) / oculto, 30 FPS |
 | S2 | en curso | merge `e630d00` | `MonumentDataSO`, `MonumentCatalogSO`, catálogo con los 5 monumentos, descripciones ES, `MonumentDataValidator`, `OnValidate`. **Falta**: los 5 marcadores reales |
 | — | 04/09/2026 | `db36f3f`…`3f908cf` | Auditoría: fuga de `Material` cortada, imagen fuente de tracking versionada, `ARPlaneManager` off, validador de CI, README y `CLAUDE.md` alineados a la realidad |
+| — | 16/10/2026 | `553144d`… | `docs/` importada y contrastada · validador de CI determinístico (`b209fd6`) · `.asmdef` de Models, Core y Tests · primeros 29 tests EditMode en verde |
 
 > 🔁 `PROJECT_PROGRESS.md` afirmaba que en S1 se había "restaurado" `AppContext` como
 > Service Locator completo (`Register<T>`, `Resolve<T>`, `TryResolve<T>`). **En el código,

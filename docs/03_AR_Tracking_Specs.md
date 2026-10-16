@@ -14,7 +14,7 @@
 |---|---|
 | Unity | 2022.3.62f3 LTS |
 | AR Foundation / ARCore / ARKit | **5.2.0** |
-| XR Management | 4.4.1 |
+| XR Management | 4.5.0 |
 | Librería de referencia | **Build-time**, estática: `Assets/_SenderoAR/AR/Libraries/SenderoTrackingLibrary.asset` |
 | Android | API 24+, ARM64, IL2CPP |
 | iOS | 14+ |

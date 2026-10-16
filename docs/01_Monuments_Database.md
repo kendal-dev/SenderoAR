@@ -162,7 +162,7 @@ impresión. Detalle en [`06_3D_Pipeline.md`](06_3D_Pipeline.md) §10.
 | Defense Flags | `IsPhysicalInDefense` | `bool` |
 
 `OnValidate()` (solo editor): copia el nombre del asset a `MonumentId` si está vacío, aplica
-`Clamp01` al umbral y pone piso de 0.60 m a `PhysicalSize`.
+`Clamp01` al umbral y, si un eje de `PhysicalSize` es ≤ 0, lo pone en 0.60 m (no es un mínimo: 0.20 m se respeta). Cubierto por `Tests/EditMode/MonumentDataSOValidationTests`.
 
 `MonumentCatalogSO` agrupa los 5 en orden (`SenderoMonumentCatalog.asset`) y expone
 `TryGetById(string, out MonumentDataSO)`.
