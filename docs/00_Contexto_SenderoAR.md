@@ -87,7 +87,8 @@ Addressables; pt-BR se descarga bajo demanda.
 ### 3.4. Patrón — 🟡 parcial
 
 MVVM puro sin frameworks. **Hoy existen** contratos, modelos, Composition Root, tres `.asmdef`
-(`SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode`) y 29 tests EditMode;
+(`SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode`), el Service Locator, el
+repositorio de monumentos y 60 tests EditMode;
 **no existen** ViewModels, Views ni infraestructura reactiva. Ver
 [`04_MVVM_Patterns.md`](04_MVVM_Patterns.md).
 

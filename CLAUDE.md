@@ -73,22 +73,25 @@ código y el documento se corrige en el mismo commit.
 |---|---|
 | Image tracking (ARCore, AR Foundation 5.2) | 🟢 Validado en Samsung A52s con **1 marcador impreso de 20 cm** |
 | Escenas `_App_Boot` → `_Main` | 🟢 Encadenadas, en Build Settings |
-| Capa de datos | 🟢 `MonumentDataSO` + catálogo + **5 assets** con descripción ES |
-| Contratos de servicio | 🟢 5 interfaces escritas y documentadas |
+| Capa de datos | 🟢 `MonumentDataSO` + catálogo + **5 assets** con `DisplayName` y descripción ES |
+| Contratos de servicio | 🟢 5 interfaces escritas y documentadas · **1 implementada**: `IMonumentRepository` → `CatalogMonumentRepository` (`Core/Repositories/`) |
+| Service Locator | 🟢 `AppContext` con `Register`/`Resolve`/`TryResolve`; `AppBootstrapper` registra el repositorio al arrancar con el catálogo asignado en `_App_Boot` |
 | Assembly definitions | 🟢 `SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode` (opción (a) de `docs/04` §2.3: sin mover archivos ni GUIDs) |
-| Tests | 🟢 **29 tests EditMode en verde** (batchmode, 16/10), también en un clone limpio desde GitHub con importación completa. Cubren la capa de datos: catálogo, `OnValidate`, datos reales de los 5 `.asset`, enums serializados, `MonumentSnapshot` |
+| Tests | 🟢 **60 tests EditMode en verde** (batchmode, 16/10): catálogo, `OnValidate`, datos reales de los 5 `.asset`, enums serializados, `MonumentSnapshot`, repositorio, Service Locator y el catálogo cableado en `_App_Boot`. Los primeros 29 también pasaron en un clone limpio desde GitHub |
 | Compilación | 🟢 Batchmode con 2022.3.62f3 el 16/10: **0 errores de C#** |
 | Documentación técnica | 🟢 `docs/` importada y contrastada con el código |
 | CI en `main` | 🟢 Validador determinístico mergeado (`b209fd6`, merge `643338d`): 0 errores también en un clone limpio. Estuvo en rojo desde `553144d` hasta ese merge. Los tests **no** corren en CI (falta licencia de Unity en los secrets) |
-| Implementaciones de los contratos | 🔴 **Cero.** No hay una sola clase que implemente ninguna |
+| Contratos sin implementar | 🔴 `IARTrackingService`, `IAudioPlaybackService`, `IChatbotClient`, `ILocalizationService` |
+| Verificación en el teléfono de lo del 16/10 | 🟡 Pendiente (D7): que la app siga arrancando hasta `_Main` con el repositorio registrado (debe aparecer `[Bootstrap] IMonumentRepository registrado (5 monumentos).` en `adb logcat`) |
 | ViewModels / Views | 🔴 Carpetas vacías (solo `.gitkeep`) |
 | Audio · 3D · chatbot · UI | 🔴 Nada |
 
 ### La distancia real
 
 **Sprint 2 de 12.** Entre el 27/05 y el 04/09 no hubo un solo commit con cambios;
-entre el 04/09 y el 16/10, solo el de documentación. El 16/10 entraron los `.asmdef` y los
-primeros tests: es el primer avance de código desde la auditoría.
+entre el 04/09 y el 16/10, solo el de documentación. El 16/10 entraron los `.asmdef`, los
+primeros tests, el repositorio y el Service Locator: es el primer avance de código desde la
+auditoría.
 
 ### Ruido en Git — pendiente de Daniel
 
@@ -163,11 +166,12 @@ Una funcionalidad está terminada **solo** cuando:
 
 🔴 **Hoy el proyecto tiene 0 unidades cerradas bajo esta definición.**
 
-La más cercana es la **capa de datos** (`MonumentDataSO` + catálogo): cumple (a), (b) (29
-tests EditMode, incluidos los que leen los `.asset` reales) y (d). Le falta (c): **nada en
-la escena la usa todavía**, así que no hay nada que ver en el teléfono. Se cierra cuando el
-tracking la consuma (§7.2: C1–C3 y C6) y Daniel lo vea en el A52s con una foto impresa (D7). El tracking en sí cumple
-(c) desde S1, pero no tiene tests.
+La más cercana es la **capa de datos con su repositorio** (`MonumentDataSO` + catálogo +
+`CatalogMonumentRepository` + registro en `AppContext`): cumple (a), (b) (tests EditMode,
+incluidos los que leen los `.asset` reales y la escena de arranque) y (d). Le falta (c): lo
+único visible en el teléfono hoy es una línea de log al arrancar. Se cierra cuando el
+tracking muestre el nombre del monumento (§7.2, C6) y Daniel lo vea en el A52s con una foto
+impresa (D7). El tracking en sí cumple (c) desde S1, pero no tiene tests.
 
 ---
 
@@ -213,7 +217,8 @@ atención a nadie.**
 
 ## 7. Próximos pasos
 
-> Revisado el 16/10/2026. Hecho ese día: CI en verde, `.asmdef`, 29 tests, docs alineadas.
+> Revisado el 16/10/2026. Hecho ese día: CI en verde, `.asmdef`, alcance decidido, C1–C3 y
+> 60 tests, docs alineadas.
 > El trabajo quedó partido en dos listas: lo que **solo Daniel puede hacer** (decisiones,
 > cámara, teléfono, fuentes, credenciales) y lo que **Claude hace sin él**.
 
@@ -237,9 +242,9 @@ atención a nadie.**
 
 | # | Tarea | Depende de |
 |---|---|---|
-| C1 | Agregar `DisplayName` a `MonumentDataSO` y completarlo en los 5 `.asset` (lo exige `MonumentSnapshot`; ver `docs/04` §6) + test | Nada |
-| C2 | Implementar `IMonumentRepository` sobre `MonumentCatalogSO` + tests | C1 |
-| C3 | Completar `AppContext` como Service Locator (`Register`/`Resolve`/`TryResolve`, `docs/04` §3) + tests, y registrar el repositorio en `AppBootstrapper` | C2 |
+| C1 | ✅ `DisplayName` en `MonumentDataSO` y en los 5 `.asset` + tests (`1638dc2`) | — |
+| C2 | ✅ `CatalogMonumentRepository` implementa `IMonumentRepository` + 16 tests (`767c27a`) | — |
+| C3 | ✅ Service Locator en `AppContext` y repositorio registrado en `AppBootstrapper` + 13 tests (`be7e426`). Falta verlo arrancar en el A52s (D7) | — |
 | C4 | **Dos librerías de tracking con las mismas texturas**: campo (ancho real, D4) y demo (ancho impreso, D5), elegidas al arrancar. Extender el validador para que compruebe que las dos apuntan a las mismas imágenes versionadas. El mecanismo se puede armar ya con el placeholder; las fotos reales entran cuando lleguen | Mecanismo: nada · Fotos: D2–D5 |
 | C5 | Si D6 trae más de una foto por fachada (por horario), permitir **varias imágenes por monumento** (`AnchorImageName` pasa a ser un prefijo o una lista) + tests | D6 |
 | C6 | Reemplazar el cubo de debug por el **nombre del monumento** (TextMeshPro 3D) resuelto vía repositorio, **con escala proporcional a `ARTrackedImage.size`**, para que se lea igual sobre una foto de 30 cm que sobre una fachada de varios metros → primera unidad candidata a DoD | C3 · cierra con D7 (impresa) y D6 (fachada) |

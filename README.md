@@ -108,7 +108,7 @@ Como complemento online está planificado un chatbot histórico sobre **Gemini**
 
 El proyecto implementa el patrón **Model-View-ViewModel (MVVM) puro en C#**, sin frameworks externos como UniRx o Zenject. Esto garantiza:
 
-- 🟡 **Testabilidad** — el código propio compila en tres assembly definitions (`SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode`) y hay **29 tests EditMode** sobre la capa de datos, en verde. Corren dentro de Unity (los modelos usan `ScriptableObject`), todavía no en el CI. Ver [`docs/04_MVVM_Patterns.md`](docs/04_MVVM_Patterns.md) §2
+- 🟡 **Testabilidad** — el código propio compila en tres assembly definitions (`SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode`) y hay **60 tests EditMode** en verde sobre la capa de datos, el repositorio de monumentos y el Service Locator. Corren dentro de Unity (los modelos usan `ScriptableObject`), todavía no en el CI. Ver [`docs/04_MVVM_Patterns.md`](docs/04_MVVM_Patterns.md) §2
 - ✅ **Zero allocation por frame** — objetivo de diseño: el color de estado de tracking se aplica con `MaterialPropertyBlock` y las etiquetas del HUD se cachean, precisamente para no generar basura en el bucle de render
 - ✅ **Desacoplamiento total** — La capa de presentación ignora la existencia de la UI
 - ✅ **Inyección de dependencias híbrida** — Service Locator + Constructor Injection
@@ -157,7 +157,8 @@ SenderoAR/
 │       ├── AR/Libraries/            # XRReferenceImageLibrary (versionada)
 │       ├── Core/
 │       │   ├── AR/                   # ImageTrackingController, TimeoutWatcher
-│       │   ├── Contracts/            # 5 interfaces de servicio (sin impl. aún)
+│       │   ├── Contracts/            # 5 interfaces de servicio (1 implementada)
+│       │   ├── Repositories/         # CatalogMonumentRepository (IMonumentRepository)
 │       │   ├── Diagnostics/          # FPSDiagnosticsHUD (descartable, S1)
 │       │   ├── Infrastructure/       # AppBootstrapper, AppContext, SceneNames
 │       │   └── Materials/            # DebugCubeMat (URP)
@@ -196,7 +197,7 @@ Proyecto estructurado en **12 sprints de 2 semanas** (24 semanas totales), sigui
 | **S0** | 18 – 22 May 2026 | Cimentación: setup repo + AR Foundation 5.2 | ✅ Cerrado |
 | **S1** | 25 May – 5 Jun | Image Tracking PoC de 1 monumento | ✅ Cerrado — validado en dispositivo físico |
 | **S2** | 8 – 19 Jun | Modelo de datos + ScriptableObjects | 🟡 **En curso** — capa de datos lista (5 `MonumentDataSO` + catálogo); faltan los 5 marcadores reales en la librería |
-| **S3** | 22 Jun – 3 Jul | Arquitectura MVVM base | 🟡 Contratos escritos y `.asmdef` de Models/Core/Tests; sin implementaciones ni infraestructura MVVM |
+| **S3** | 22 Jun – 3 Jul | Arquitectura MVVM base | 🟡 `.asmdef` de Models/Core/Tests, Service Locator y `IMonumentRepository` implementado; sin infraestructura reactiva, ViewModels ni Views |
 | **S4** | 6 – 17 Jul | Sistema de localización trilingüe | ⬜ Descripciones EN/PT vacías en los 5 assets |
 | **S5** | 20 – 31 Jul | UI Core (Views) | ⬜ |
 | **S6** | 3 – 14 Ago | Integración de modelos 3D | ⬜ |
@@ -204,7 +205,7 @@ Proyecto estructurado en **12 sprints de 2 semanas** (24 semanas totales), sigui
 | **S8** | 31 Ago – 11 Sep | Firebase Setup + App Check | ⬜ Sin dependencias Firebase en `manifest.json` |
 | **S9** | 14 – 25 Sep | Chatbot Gemini | ⬜ |
 | **S10** | 28 Sep – 9 Oct | Pulido UX + performance | ⬜ |
-| **S11** | 12 – 23 Oct | Testing + QA | 🟡 29 tests EditMode de la capa de datos; nada de PlayMode ni de integración AR |
+| **S11** | 12 – 23 Oct | Testing + QA | 🟡 60 tests EditMode (datos, repositorio, Service Locator, escena de arranque); nada de PlayMode ni de integración AR |
 | **S12** | 26 Oct – 6 Nov | Validación con usuarios reales | ⬜ |
 
 > 📌 **El calendario de arriba es el planificado en Sprint 0 y está vencido.**

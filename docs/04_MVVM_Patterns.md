@@ -17,7 +17,7 @@
 | `BaseViewModel`, `ReactiveProperty<T>`, `RelayCommand`, `CompositeDisposable` | 📐 No existen |
 | ViewModels / Views | 📐 Carpetas vacías (solo `.gitkeep`) |
 | Assembly definitions (`.asmdef`) | ✅ `SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode` (16/10/2026). Ver §2 |
-| Tests | ✅ 29 tests EditMode en `Tests/EditMode/`, verdes en batchmode el 16/10/2026. Ver §2.2 |
+| Tests | ✅ 60 tests EditMode en `Tests/EditMode/`, verdes en batchmode el 16/10/2026. Ver §2.2 |
 
 ---
 
@@ -65,8 +65,12 @@ puede referenciar `Assembly-CSharp`**: los tests no lo verían.
 |---|---|
 | `MonumentCatalogSOTests` | `TryGetById`: acierto, ID desconocido, `null`/vacío, catálogo vacío, slots `null`, mayúsculas |
 | `MonumentDataSOValidationTests` | `OnValidate`: ID vacío toma el nombre del asset, umbral en [0..1], `PhysicalSize` ≤ 0 → 0.60 m, 0.20 m se respeta |
-| `MonumentCatalogAssetTests` | Los datos **reales**: 5 monumentos en orden, ID = nombre del asset y único, datos de tracking en rango, descripción ES presente |
+| `MonumentCatalogAssetTests` | Los datos **reales**: 5 monumentos en orden, ID = nombre del asset y único, `DisplayName` presente, único y con acentos bien decodificados, datos de tracking en rango, descripción ES presente |
 | `ModelContractTests` | Valores serializados estables de `LanguageCode` y `MonumentTrackingPhase`; validación del constructor de `MonumentSnapshot` |
+| `CatalogMonumentRepositoryTests` | El contrato de `IMonumentRepository`: mapeo de campos, 3 idiomas siempre presentes, `null` para ID desconocido, lista vacía, orden, solo lectura, cancelación, ID duplicado y nombre vacío fallan nombrando el monumento, y el catálogo real |
+| `AppContextTests` | Ciclo del Service Locator: registro antes de `Initialize`, resolución, `TryResolve` sin excepciones, duplicados, `null`, registro tardío y `Reset` |
+| `BootSceneTests` | `_App_Boot` tiene un solo `AppBootstrapper` y el catálogo asignado |
+| `TestAssets` (helper) | Crea y destruye `MonumentDataSO` y `MonumentCatalogSO` en memoria para los tests |
 
 Correrlos sin abrir el editor (~3 min; falla si el editor tiene el proyecto abierto):
 
