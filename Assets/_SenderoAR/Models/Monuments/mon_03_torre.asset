@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: mon_03_torre
   m_EditorClassIdentifier: 
   MonumentId: mon_03_torre
+  DisplayName: Torre del Campanario
   FoundationYear: 1748
   GPSCoordinates: {x: -17.8481, y: -60.7422}
   AnchorImageName: torre_campanario

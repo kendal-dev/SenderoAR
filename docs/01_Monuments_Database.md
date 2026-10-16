@@ -161,7 +161,7 @@ impresión. Detalle en [`06_3D_Pipeline.md`](06_3D_Pipeline.md) §10.
 
 | Sección (`[Header]`) | Campo | Tipo |
 |---|---|---|
-| Identity | `MonumentId`, `FoundationYear` | `string`, `int` |
+| Identity | `MonumentId`, `DisplayName`, `FoundationYear` | `string`, `string`, `int` |
 | Geolocation | `GPSCoordinates` | `Vector2` (x = lat, y = lon) |
 | AR Tracking | `AnchorImageName`, `PhysicalSize`, `TrackingConfidenceThreshold` | `string`, `Vector2` (m), `float` [0..1] |
 | 3D Content (Sprint 6) | `Monument3DPrefab`, `PivotOffset` | `GameObject`, `Vector3` |

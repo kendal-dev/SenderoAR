@@ -72,6 +72,30 @@ namespace SenderoAR.Tests.EditMode
         }
 
         [Test]
+        public void EveryMonument_HasUniqueDisplayName()
+        {
+            // MonumentSnapshot lanza si DisplayName esta vacio: sin este dato el
+            // repositorio no puede construir el snapshot de ese monumento.
+            var seen = new HashSet<string>();
+            foreach (var monument in _catalog.All)
+            {
+                Assert.IsFalse(string.IsNullOrWhiteSpace(monument.DisplayName),
+                    $"{monument.MonumentId}: DisplayName vacio.");
+                Assert.IsTrue(seen.Add(monument.DisplayName),
+                    $"DisplayName duplicado: {monument.DisplayName}");
+            }
+        }
+
+        [Test]
+        public void DisplayName_DecodesAccentsWrittenAsYamlEscapes()
+        {
+            // Los .asset guardan "Jos\xE9" (escape YAML, igual que Unity). Si el
+            // escape no se decodificara, el usuario veria la barra invertida.
+            Assert.IsTrue(_catalog.TryGetById("mon_01_templo", out var templo));
+            Assert.AreEqual("Templo de San José de Chiquitos", templo.DisplayName);
+        }
+
+        [Test]
         public void EveryMonument_HasTrackingDataWithinBounds()
         {
             foreach (var monument in _catalog.All)

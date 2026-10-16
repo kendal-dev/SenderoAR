@@ -10,6 +10,8 @@ namespace SenderoAR.Models
     {
         [Header("Identity")]
         public string MonumentId;
+        [Tooltip("Nombre que ve el usuario. MonumentSnapshot lo exige no vacio.")]
+        public string DisplayName;
         public int FoundationYear;
 
         [Header("Geolocation")]

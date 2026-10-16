@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: mon_05_pila
   m_EditorClassIdentifier: 
   MonumentId: mon_05_pila
+  DisplayName: Pila Bautismal
   FoundationYear: 1652
   GPSCoordinates: {x: -17.8483, y: -60.7425}
   AnchorImageName: pila_bautismal

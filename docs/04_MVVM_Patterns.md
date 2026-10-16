@@ -299,11 +299,10 @@ por frame.
 `IMonumentRepository` es el primero a implementar (`CLAUDE.md` §7): una clase que
 lee `MonumentCatalogSO` y devuelve `MonumentSnapshot`s.
 
-> ⚠️ **Falta un dato para implementarlo.** El constructor de `MonumentSnapshot` exige un
-> `displayName` no vacío, y `MonumentDataSO` **no tiene campo de nombre**. Antes del
-> repositorio hay que agregar `DisplayName` (o un `LocalizedDescription` de nombres) al
-> `ScriptableObject` y completarlo en los 5 `.asset`. Los nombres están en
-> [`01_Monuments_Database.md`](01_Monuments_Database.md).
+> 🔁 `MonumentSnapshot` exige un `displayName` no vacío, y `MonumentDataSO` no tenía campo de
+> nombre. Desde el 16/10/2026 tiene `DisplayName` (español), completo en los 5 `.asset` y
+> cubierto por `MonumentCatalogAssetTests`. Si más adelante el nombre tiene que traducirse,
+> pasa a ser un `LocalizedDescription`.
 
 ---
 

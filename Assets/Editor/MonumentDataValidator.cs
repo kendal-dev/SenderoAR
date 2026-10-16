@@ -27,6 +27,12 @@ namespace SenderoAR.EditorTools
                     errors++;
                 }
 
+                if (string.IsNullOrWhiteSpace(mon.DisplayName))
+                {
+                    Debug.LogError($"[MonumentValidator] Empty DisplayName at {path}", mon);
+                    errors++;
+                }
+
                 if (string.IsNullOrWhiteSpace(mon.AnchorImageName))
                 {
                     Debug.LogWarning($"[MonumentValidator] Empty AnchorImageName at {path}", mon);

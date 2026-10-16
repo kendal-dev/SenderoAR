@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: mon_04_boveda
   m_EditorClassIdentifier: 
   MonumentId: mon_04_boveda
+  DisplayName: "La B\xF3veda"
   FoundationYear: 1754
   GPSCoordinates: {x: -17.8481, y: -60.7419}
   AnchorImageName: la_boveda
