@@ -13,7 +13,7 @@
 | 5 contratos en `Core/Contracts/` | ✅ Escritos y documentados. Implementado: `IMonumentRepository` (`Core/Repositories/CatalogMonumentRepository`). Los otros 4, sin implementar |
 | Modelos, enums y `ScriptableObject`s en `Models/` | ✅ |
 | Composition Root (`AppBootstrapper`) | ✅ Valida AR, fija 30 FPS y portrait, inicializa `AppContext`, carga `_Main` |
-| `AppContext` | 🟡 **Solo una compuerta**: `IsReady`, `Initialize()`, `Reset()`, `EnsureReady()`. **No registra ni resuelve servicios** |
+| `AppContext` | ✅ **Service Locator** (16/10/2026): `Register<T>` (solo antes de `Initialize`), `Initialize()`, `Resolve<T>`, `TryResolve<T>`, `Reset()`. Ver §3 |
 | `BaseViewModel`, `ReactiveProperty<T>`, `RelayCommand`, `CompositeDisposable` | 📐 No existen |
 | ViewModels / Views | 📐 Carpetas vacías (solo `.gitkeep`) |
 | Assembly definitions (`.asmdef`) | ✅ `SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode` (16/10/2026). Ver §2 |
@@ -154,32 +154,50 @@ Cada capa nueva (MVVM, Services, ViewModels, Views, DemoMode) entra con su propi
 
 - `_App_Boot.unity` (índice 0) contiene solo `AppBootstrapper`, con
   `[DefaultExecutionOrder(-1000)]` y `DontDestroyOnLoad`.
+- `Awake()` registra los servicios (`RegisterServices()`): hoy, `IMonumentRepository` como
+  `CatalogMonumentRepository` sobre el catálogo asignado en la escena (campo
+  `monumentCatalog` → `SenderoMonumentCatalog.asset`). Si el campo está vacío, lo dice con
+  `Debug.LogError` y no registra nada.
 - `Start()` es una corrutina: `ARSession.CheckAvailability()` → `ARSession.Install()` si
   hace falta → aborta si `Unsupported` → `AppContext.Initialize()` →
   `SceneManager.LoadSceneAsync(SceneNames.Main)`.
 - `_Main.unity` (índice 1) tiene su **propia** `ARSession`, `XR Origin` y
   `ARTrackedImageManager`.
 
-### Pendiente — 📐 diseño
+### Service Locator — ✅ en el repo (16/10/2026)
 
-> 🔁 `PROJECT_PROGRESS.md` daba por "restaurado" un Service Locator completo en
-> `AppContext`. No está en el código. La API prevista es:
+> 🔁 `PROJECT_PROGRESS.md` daba por "restaurado" en mayo un Service Locator completo. No
+> estaba en el código; se implementó el 16/10/2026.
 
 ```csharp
 public static class AppContext
 {
     public static bool IsReady { get; }
-    public static void Initialize();
-    public static void Reset();                 // para tests
+    public static void Initialize();                               // cierra el registro
+    public static void Reset();                                    // vacía todo; para tests
 
-    public static void Register<T>(T service) where T : class;   // falla si ya existe
-    public static T Resolve<T>() where T : class;                // pasa por EnsureReady
-    public static bool TryResolve<T>(out T service) where T : class;
+    public static void Register<T>(T service) where T : class;    // null, duplicado o después de Initialize → excepción
+    public static T Resolve<T>() where T : class;                  // antes de Initialize o sin servicio → excepción
+    public static bool TryResolve<T>(out T service) where T : class; // nunca lanza
 }
 ```
 
-Los servicios se construyen y se registran **solo en `AppBootstrapper`**. Si un servicio se
-decora (modo demo), la decoración también ocurre ahí:
+Reglas:
+
+- **El registro se cierra en `Initialize()`.** Toda la composición (incluida la
+  decoración del modo demo) ocurre en `AppBootstrapper` antes de arrancar.
+- **La clave es el tipo de `Register<T>`**: se registra y se pide por el contrato
+  (`IMonumentRepository`), nunca por la clase concreta.
+- Solo los puntos de entrada (`MonoBehaviour`s) llaman a `Resolve`; lo demás recibe sus
+  dependencias por constructor.
+- ⚠️ Fuera de `SenderoAR.Core.Infrastructure`, con `using System;` el nombre `AppContext`
+  choca con `System.AppContext` (CS0104). Usar un alias:
+  `using AppContext = SenderoAR.Core.Infrastructure.AppContext;`.
+
+Cubierto por `AppContextTests` (ciclo de vida) y `BootSceneTests` (el catálogo está
+asignado en `_App_Boot`).
+
+Si un servicio se decora (modo demo), la decoración también ocurre en `AppBootstrapper`:
 
 ```csharp
 // En AppBootstrapper, antes de AppContext.Initialize()

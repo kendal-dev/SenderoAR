@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetFrameRate: 30
+  monumentCatalog: {fileID: 11400000, guid: 9997de11580b2fd4580ca86cb4169991, type: 2}
 --- !u!4 &907274468
 Transform:
   m_ObjectHideFlags: 0

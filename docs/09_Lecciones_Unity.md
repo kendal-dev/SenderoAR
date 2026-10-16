@@ -18,6 +18,7 @@
 | Con varios marcadores, el timeout se dispara con el monumento equivocado | Estado de tracking guardado globalmente | Estado **por `TrackableId`** (commit `db36f3f`) |
 | `OnValidate()` no se ejecuta, sin error en consola | `#if UNITY_EDITOR` / `#endif` en la misma línea que una llave (pegado con CRLF raro) | Directivas **siempre en su propia línea** |
 | Error de ambigüedad con `Debug.Log` dentro del proyecto | Namespace propio terminado en `.Debug` | Prohibido `Debug`, `Object`, `Random`, `Time` como último segmento de namespace |
+| `error CS0104: 'AppContext' is an ambiguous reference` | `System.AppContext` existe. Fuera de `SenderoAR.Core.Infrastructure`, con `using System;`, el nombre corto es ambiguo | Alias: `using AppContext = SenderoAR.Core.Infrastructure.AppContext;` (pasó al escribir `AppContextTests`, 16/10) |
 | Un clone limpio compila pero **no reconoce ningún marcador** | La imagen de la librería no está en Git: la librería guarda el GUID, no los píxeles | Las fuentes de tracking van en `Art/Tracking/` (versionada). `validate_project.py` lo detecta |
 | El teléfono se calienta y el FPS baja tras ~10 min | `ARPlaneManager` activo sin necesidad + calor ambiente | `ARPlaneManager` y `ARRaycastManager` desactivados en `_Main` (commit `cc0d8f9`) |
 | `maxNumberOfMovingImages` marcada obsoleta | API vieja | En AR Foundation 5.x: **`requestedMaxNumberOfMovingImages`** |

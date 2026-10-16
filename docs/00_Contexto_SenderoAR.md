@@ -237,10 +237,9 @@ Las fechas que mandan están en `CLAUDE.md` §3. 🔁 Desde el 22/09/2026 la def
 | S1 | 25/05/2026 | `266aa64` | `SenderoTrackingLibrary` con 1 placeholder, escenas `_App_Boot` → `_Main`, `ImageTrackingController` URP-safe, `FPSDiagnosticsHUD`, `TrackingLimitedTimeoutWatcher`. Validado en A52s: cubo cian (tracking) / ámbar (limited) / oculto, 30 FPS |
 | S2 | en curso | merge `e630d00` | `MonumentDataSO`, `MonumentCatalogSO`, catálogo con los 5 monumentos, descripciones ES, `MonumentDataValidator`, `OnValidate`. **Falta**: los 5 marcadores reales |
 | — | 04/09/2026 | `db36f3f`…`3f908cf` | Auditoría: fuga de `Material` cortada, imagen fuente de tracking versionada, `ARPlaneManager` off, validador de CI, README y `CLAUDE.md` alineados a la realidad |
-| — | 16/10/2026 | `553144d`… | `docs/` importada y contrastada · validador de CI determinístico (`b209fd6`) · `.asmdef` de Models, Core y Tests · primeros 29 tests EditMode en verde |
+| — | 16/10/2026 | `553144d`… | `docs/` importada y contrastada · validador de CI determinístico (`b209fd6`) · `.asmdef` de Models, Core y Tests · alcance decidido (fachada real) · `DisplayName` · `CatalogMonumentRepository` (primera implementación de un contrato) · Service Locator en `AppContext` · 60 tests EditMode en verde |
 
 > 🔁 `PROJECT_PROGRESS.md` afirmaba que en S1 se había "restaurado" `AppContext` como
-> Service Locator completo (`Register<T>`, `Resolve<T>`, `TryResolve<T>`). **En el código,
-> `AppContext` es solo una compuerta de inicialización** (`IsReady`, `Initialize()`,
-> `Reset()`, `EnsureReady()`). El Service Locator está por construir — ver
-> [`04_MVVM_Patterns.md`](04_MVVM_Patterns.md) §3.
+> Service Locator completo (`Register<T>`, `Resolve<T>`, `TryResolve<T>`). En el código era
+> solo una compuerta de inicialización. El Service Locator se implementó recién el
+> 16/10/2026 — ver [`04_MVVM_Patterns.md`](04_MVVM_Patterns.md) §3.
