@@ -69,9 +69,15 @@ def read(path):
 
 
 # --------------------------------------------------------------------------
+def is_hidden(path):
+    """Unity no importa archivos ni carpetas que empiezan con '.': no llevan .meta."""
+    return any(part.startswith(".") for part in path.split("/"))
+
+
 def check_meta_pairs(files):
-    assets = {f for f in files if f.startswith("Assets/") and not f.endswith(".meta")}
-    metas = {f for f in files if f.startswith("Assets/") and f.endswith(".meta")}
+    tracked = [f for f in files if f.startswith("Assets/")]
+    assets = {f for f in tracked if not f.endswith(".meta") and not is_hidden(f)}
+    metas = {f for f in tracked if f.endswith(".meta")}
 
     for asset in sorted(assets):
         if asset + ".meta" not in metas:
@@ -81,8 +87,11 @@ def check_meta_pairs(files):
         target = meta[: -len(".meta")]
         if target in assets:
             continue
-        # Un .meta de carpeta es legal: la carpeta existe pero Git no la versiona.
-        if os.path.isdir(os.path.join(ROOT, target)):
+        # Un .meta de carpeta es legal solo si la carpeta tiene algo versionado
+        # (aunque sea un .gitkeep). Antes se miraba si la carpeta existia en el
+        # disco: en la maquina del autor daba 0 errores y en un clone limpio
+        # (CI) daba error, porque Git no versiona carpetas vacias.
+        if any(f.startswith(target + "/") for f in tracked):
             continue
         error(f"[meta] .meta huerfano (su asset no esta versionado): {meta}")
 
