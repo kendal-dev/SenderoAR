@@ -30,7 +30,7 @@ c. 1652, casi un siglo anterior al templo. El problema:
 Eso no la descarta (pudo traerse de otro sitio), pero la convierte en el dato con más riesgo
 del proyecto: es el argumento central de un monumento entero, figura en `FoundationYear`
 del `.asset`, en el texto orbital y en una de las preguntas preparadas para la defensa. Si
-resulta falso, hay que reescribir `mon_05` antes de H2.
+resulta falso, hay que reescribir `mon_05` antes de grabar audio o de mostrarlo en la predefensa.
 
 ---
 

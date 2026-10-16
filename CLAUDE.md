@@ -29,6 +29,7 @@
 | Al tocar… | Leer |
 |---|---|
 | Cualquier cosa rara al depurar | `docs/09_Lecciones_Unity.md` — probablemente ya pasó |
+| **Cualquier `.cs` nuevo** | `docs/04_MVVM_Patterns.md` §2.1 — va dentro de una carpeta con `.asmdef`; si cae en `Assembly-CSharp`, los tests no lo ven |
 | `Core/AR/`, la librería de tracking, marcadores | `docs/03_AR_Tracking_Specs.md` |
 | `.asmdef`, ViewModels, `AppContext`, un contrato nuevo | `docs/04_MVVM_Patterns.md` |
 | `MonumentDataSO`, los `.asset`, textos históricos | `docs/01_Monuments_Database.md` — 🔴 datos históricos **sin fuente** |
@@ -51,7 +52,7 @@ código y el documento se corrige en el mismo commit.
 | Capa de datos | 🟢 `MonumentDataSO` + catálogo + **5 assets** con descripción ES |
 | Contratos de servicio | 🟢 5 interfaces escritas y documentadas |
 | Assembly definitions | 🟢 `SenderoAR.Models`, `SenderoAR.Core`, `SenderoAR.Tests.EditMode` (opción (a) de `docs/04` §2.3: sin mover archivos ni GUIDs) |
-| Tests | 🟢 **29 tests EditMode en verde** (batchmode, 16/10) sobre la capa de datos: catálogo, `OnValidate`, datos reales de los 5 `.asset`, enums serializados, `MonumentSnapshot` |
+| Tests | 🟢 **29 tests EditMode en verde** (batchmode, 16/10), también en un clone limpio desde GitHub con importación completa. Cubren la capa de datos: catálogo, `OnValidate`, datos reales de los 5 `.asset`, enums serializados, `MonumentSnapshot` |
 | Compilación | 🟢 Batchmode con 2022.3.62f3 el 16/10: **0 errores de C#** |
 | Documentación técnica | 🟢 `docs/` importada y contrastada con el código |
 | CI en `main` | 🟢 Validador determinístico mergeado (`b209fd6`, merge `643338d`): 0 errores también en un clone limpio. Estuvo en rojo desde `553144d` hasta ese merge. Los tests **no** corren en CI (falta licencia de Unity en los secrets) |
